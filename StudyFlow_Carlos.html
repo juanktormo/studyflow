@@ -4,7 +4,6 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="theme-color" content="#1a1a2e"/>
   <title>StudyFlow</title>
   <style>
@@ -24,37 +23,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
+  <!-- Firebase (must load before app) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script>
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBJfMcD2IEzLLUvI7mbGDZIKTJgb9jzmnU",
-    authDomain: "studyflow-carlos.firebaseapp.com",
-    projectId: "studyflow-carlos",
-    storageBucket: "studyflow-carlos.firebasestorage.app",
-    messagingSenderId: "1064990005124",
-    appId: "1:1064990005124:web:448029e3366618b8242fd1"
-  };
-
-  // Initialize Firebase
-  const _fbApp = firebase.initializeApp(firebaseConfig);
-  const _db = firebase.firestore();
-
-  // Expose to app
-  window._fbDb = _db;
-  window._fbDoc = (db, ...path) => {
-    let ref = db;
-    for(let i=0; i<path.length; i+=2) ref = ref.collection(path[i]).doc(path[i+1]);
-    return ref;
-  };
-  window._fbGetDoc = ref => ref.get();
-  window._fbSetDoc = (ref, data) => ref.set(data, {merge: true});
-
-  console.log("Firebase initialized");
-
+    firebase.initializeApp({
+      apiKey: "AIzaSyBJfMcD2IEzLLUvI7mbGDZIKTJgb9jzmnU",
+      authDomain: "studyflow-carlos.firebaseapp.com",
+      projectId: "studyflow-carlos",
+      storageBucket: "studyflow-carlos.firebasestorage.app",
+      messagingSenderId: "1064990005124",
+      appId: "1:1064990005124:web:448029e3366618b8242fd1"
+    });
   </script>
 
   <!-- App -->
@@ -84,38 +64,37 @@ var _React = React,
   useState = _React.useState,
   useEffect = _React.useEffect,
   useCallback = _React.useCallback;
-
-// Firebase sync - loads and saves to Firestore, falls back to localStorage
-var FB_DOC = "studyflow/carlos";
 var load = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-    var snap, r, _t, _t2, _t3;
+    var snap, r, _t, _t2;
     return _regenerator().w(function (_context) {
       while (1) switch (_context.p = _context.n) {
         case 0:
           _context.p = 0;
           _context.n = 1;
-          return window._fbDb;
+          return firebase.firestore().collection("studyflow").doc("carlos").get();
         case 1:
-          if (!_context.v) {
-            _context.n = 3;
-            break;
-          }
-          _context.n = 2;
-          return window._fbGetDoc(window._fbDoc(window._fbDb, "studyflow", "carlos"));
-        case 2:
-          _t = _context.v;
-          _context.n = 4;
-          break;
-        case 3:
-          _t = null;
-        case 4:
-          snap = _t;
-          if (!(snap && snap.exists())) {
-            _context.n = 5;
+          snap = _context.v;
+          if (!snap.exists) {
+            _context.n = 2;
             break;
           }
           return _context.a(2, snap.data().appData);
+        case 2:
+          _context.n = 4;
+          break;
+        case 3:
+          _context.p = 3;
+          _t = _context.v;
+          console.log("FB load err:", _t);
+        case 4:
+          _context.p = 4;
+          r = localStorage.getItem("sf-local");
+          if (!r) {
+            _context.n = 5;
+            break;
+          }
+          return _context.a(2, JSON.parse(r));
         case 5:
           _context.n = 7;
           break;
@@ -123,15 +102,9 @@ var load = /*#__PURE__*/function () {
           _context.p = 6;
           _t2 = _context.v;
         case 7:
-          _context.p = 7;
-          r = localStorage.getItem("sf-local");
-          return _context.a(2, r ? JSON.parse(r) : null);
-        case 8:
-          _context.p = 8;
-          _t3 = _context.v;
           return _context.a(2, null);
       }
-    }, _callee, null, [[7, 8], [0, 6]]);
+    }, _callee, null, [[4, 6], [0, 3]]);
   }));
   return function load() {
     return _ref.apply(this, arguments);
@@ -139,20 +112,16 @@ var load = /*#__PURE__*/function () {
 }();
 var persist = /*#__PURE__*/function () {
   var _ref2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(d) {
-    var _t4;
+    var _t3;
     return _regenerator().w(function (_context2) {
       while (1) switch (_context2.p = _context2.n) {
         case 0:
           try {
             localStorage.setItem("sf-local", JSON.stringify(d));
-          } catch (_unused2) {}
+          } catch (e) {}
           _context2.p = 1;
-          if (!window._fbDb) {
-            _context2.n = 2;
-            break;
-          }
           _context2.n = 2;
-          return window._fbSetDoc(window._fbDoc(window._fbDb, "studyflow", "carlos"), {
+          return firebase.firestore().collection("studyflow").doc("carlos").set({
             appData: d
           });
         case 2:
@@ -160,8 +129,8 @@ var persist = /*#__PURE__*/function () {
           break;
         case 3:
           _context2.p = 3;
-          _t4 = _context2.v;
-          console.log("Firebase sync error:", _t4);
+          _t3 = _context2.v;
+          console.log("FB save err:", _t3);
         case 4:
           return _context2.a(2);
       }
@@ -3543,7 +3512,7 @@ function CfgView(_ref23) {
         month: "long",
         year: "numeric"
       });
-    } catch (_unused3) {
+    } catch (_unused) {
       return ds;
     }
   };
@@ -3907,7 +3876,7 @@ function MAddClass(_ref27) {
         month: "long",
         year: "numeric"
       });
-    } catch (_unused4) {
+    } catch (_unused2) {
       return untilDate;
     }
   }();
@@ -4702,7 +4671,6 @@ function MAddTask(_ref35) {
     }
   }));
 }
-
 
 const _root = ReactDOM.createRoot(document.getElementById("root"));
 _root.render(React.createElement(App, null));
