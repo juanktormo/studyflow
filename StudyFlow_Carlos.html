@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="theme-color" content="#1a1a2e"/>
   <title>StudyFlow</title>
@@ -18,12 +19,8 @@
 </head>
 <body>
   <div id="root"></div>
-
-  <!-- React -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-
-  <!-- Firebase (must load before app) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script>
@@ -36,8 +33,6 @@
       appId: "1:1064990005124:web:448029e3366618b8242fd1"
     });
   </script>
-
-  <!-- App -->
   <script>
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
@@ -86,7 +81,6 @@ var load = /*#__PURE__*/function () {
         case 3:
           _context.p = 3;
           _t = _context.v;
-          console.log("FB load err:", _t);
         case 4:
           _context.p = 4;
           r = localStorage.getItem("sf-local");
@@ -130,7 +124,6 @@ var persist = /*#__PURE__*/function () {
         case 3:
           _context2.p = 3;
           _t3 = _context2.v;
-          console.log("FB save err:", _t3);
         case 4:
           return _context2.a(2);
       }
@@ -208,7 +201,9 @@ var INIT = {
     Martes: [],
     Miércoles: [],
     Jueves: [],
-    Viernes: []
+    Viernes: [],
+    Sábado: [],
+    Domingo: []
   },
   extra: [],
   freeBlocks: [],
@@ -1353,14 +1348,34 @@ function SchedView(_ref11) {
     weeks = _ref11.weeks,
     upd = _ref11.upd,
     setModal = _ref11.setModal;
-  var _useState9 = useState(function () {
-      var i = new Date().getDay();
-      return i === 0 || i === 6 ? 0 : i - 1;
-    }),
+  var todayIdx = new Date().getDay();
+  var todayTab = todayIdx === 0 ? 6 : todayIdx - 1;
+  var _useState9 = useState(todayTab),
     _useState0 = _slicedToArray(_useState9, 2),
     day = _useState0[0],
     setDay = _useState0[1];
-  var dn = D5[day],
+
+  // Extend weeks to include Sat and Sun
+  var allWeekDates = [].concat(_toConsumableArray(weeks), _toConsumableArray([6, 0].map(function (dow) {
+    var d = new Date(weeks[0]);
+    var mon = new Date(d);
+    var diff = dow === 6 ? 5 : 6;
+    mon.setDate(new Date(weeks[0]).getDate() + diff + (dow === 0 ? 1 : 0));
+    // simpler: compute from monday
+    var monday = new Date(weeks[0]);
+    var target = new Date(monday);
+    target.setDate(monday.getDate() + (dow === 6 ? 5 : 6));
+    return target.toISOString().split("T")[0];
+  })));
+
+  // Recalculate properly
+  var monday = new Date(weeks[0]);
+  var week7 = D7.map(function (_, i) {
+    var d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    return d.toISOString().split("T")[0];
+  });
+  var dn = D7[day],
     cls = data.schedule[dn] || [],
     ext = data.extra.filter(function (e) {
       return e.day === dn;
@@ -1382,10 +1397,10 @@ function SchedView(_ref11) {
   }, "Horario Semanal"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
-      gap: 6,
+      gap: 4,
       marginBottom: 12
     }
-  }, D5.map(function (d, i) {
+  }, D7.map(function (d, i) {
     return /*#__PURE__*/React.createElement("button", {
       key: d,
       onClick: function onClick() {
@@ -1395,8 +1410,8 @@ function SchedView(_ref11) {
         flex: 1,
         background: day === i ? "#1a1a2e" : "#f0f2f5",
         border: "none",
-        borderRadius: 12,
-        padding: "8px 4px",
+        borderRadius: 10,
+        padding: "8px 2px",
         cursor: "pointer",
         textAlign: "center",
         color: day === i ? "white" : "#888"
@@ -1404,14 +1419,14 @@ function SchedView(_ref11) {
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         fontWeight: 800,
-        fontSize: 13
+        fontSize: 12
       }
-    }, DS[i]), /*#__PURE__*/React.createElement("div", {
+    }, DA[i]), /*#__PURE__*/React.createElement("div", {
       style: {
         fontSize: 10,
-        opacity: .8
+        opacity: .7
       }
-    }, new Date(weeks[i]).getDate()));
+    }, d.slice(0, 3)));
   })), /*#__PURE__*/React.createElement(SubCard, {
     title: "Clases",
     onAdd: function onAdd() {
