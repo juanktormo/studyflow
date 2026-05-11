@@ -20,6 +20,7 @@
     select { -webkit-appearance:menulist; appearance:menulist; }
     input[type=range] { -webkit-appearance:slider-horizontal; appearance:auto; }
     ::-webkit-scrollbar { width:0; height:0; }
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
   </style>
 </head>
 <body>
@@ -5579,7 +5580,7 @@ function MAddTask(_ref41) {
   var _useState49 = useState({
       title: "",
       subject: data.subjects[0] || "",
-      type: "Examen",
+      type: "Exam",
       dueDate: initDate,
       estimatedHours: 2,
       priority: "media",
@@ -5588,9 +5589,16 @@ function MAddTask(_ref41) {
     _useState50 = _slicedToArray(_useState49, 2),
     f = _useState50[0],
     setF = _useState50[1];
+  var _useState51 = useState(false),
+    _useState52 = _slicedToArray(_useState51, 2),
+    listening = _useState52[0],
+    setListening = _useState52[1];
+  var _useState53 = useState(""),
+    _useState54 = _slicedToArray(_useState53, 2),
+    voiceErr = _useState54[0],
+    setVoiceErr = _useState54[1];
   var save = function save() {
     if (!f.title || !f.dueDate) return;
-    // Normalise date to YYYY-MM-DD just in case
     var parts = f.dueDate.split("-");
     var safeDate = "".concat(parts[0], "-").concat(String(parts[1]).padStart(2, "0"), "-").concat(String(parts[2]).padStart(2, "0"));
     upd(function (d) {
@@ -5604,11 +5612,58 @@ function MAddTask(_ref41) {
     });
     close();
   };
+  var startVoice = function startVoice() {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      setVoiceErr("Voice input not supported in this browser");
+      return;
+    }
+    setVoiceErr("");
+    var rec = new SR();
+    rec.lang = "en-GB";
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    rec.onstart = function () {
+      return setListening(true);
+    };
+    rec.onend = function () {
+      return setListening(false);
+    };
+    rec.onerror = function (e) {
+      setListening(false);
+      setVoiceErr("Error: ".concat(e.error, ". Try again."));
+    };
+    rec.onresult = function (e) {
+      var transcript = e.results[0][0].transcript;
+      setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          title: x.title ? x.title + " " + transcript : transcript
+        });
+      });
+    };
+    rec.start();
+  };
   return /*#__PURE__*/React.createElement(ModalWrap, {
     title: "New task / exam",
     close: close,
     save: save
-  }, /*#__PURE__*/React.createElement(Lbl, null, "Title *"), /*#__PURE__*/React.createElement(Inp, {
+  }, /*#__PURE__*/React.createElement(Lbl, null, "Title *"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 8,
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    style: {
+      flex: 1,
+      border: "1px solid #eee",
+      borderRadius: 10,
+      padding: "10px 12px",
+      fontSize: 14,
+      background: "#fafafa",
+      outline: "none",
+      fontFamily: "inherit"
+    },
     placeholder: "E.g.: Maths Exam Topic 5",
     value: f.title,
     onChange: function onChange(e) {
@@ -5618,7 +5673,86 @@ function MAddTask(_ref41) {
         });
       });
     }
-  }), /*#__PURE__*/React.createElement(Lbl, null, "Subject"), /*#__PURE__*/React.createElement(Sel, {
+  }), /*#__PURE__*/React.createElement("button", {
+    onClick: startVoice,
+    title: "Speak to fill title",
+    style: {
+      width: 46,
+      height: 46,
+      borderRadius: 12,
+      border: "none",
+      flexShrink: 0,
+      cursor: "pointer",
+      background: listening ? "#FF6B6B" : "#1a1a2e",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      boxShadow: listening ? "0 0 0 4px rgba(255,107,107,0.3)" : "none",
+      transition: "all .2s"
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "22",
+    height: "22",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "white",
+    strokeWidth: "2",
+    strokeLinecap: "round"
+  }, /*#__PURE__*/React.createElement("rect", {
+    x: "9",
+    y: "2",
+    width: "6",
+    height: "11",
+    rx: "3"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M19 10a7 7 0 01-14 0"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "12",
+    y1: "19",
+    x2: "12",
+    y2: "22"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "8",
+    y1: "22",
+    x2: "16",
+    y2: "22"
+  })))), listening && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+      marginTop: 8,
+      background: "#fff0f0",
+      borderRadius: 10,
+      padding: "8px 12px"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 10,
+      height: 10,
+      borderRadius: "50%",
+      background: "#FF6B6B",
+      animation: "pulse 1s infinite"
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: "#FF6B6B",
+      fontWeight: 700
+    }
+  }, "Listening... speak now")), voiceErr && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#FF6B6B",
+      marginTop: 6
+    }
+  }, voiceErr), !listening && !voiceErr && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#bbb",
+      marginTop: 4
+    }
+  }, "\uD83C\uDFA4 Tap the mic and speak the task title"), /*#__PURE__*/React.createElement(Lbl, null, "Subject"), /*#__PURE__*/React.createElement(Sel, {
     value: f.subject,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -5717,7 +5851,7 @@ function MAddTask(_ref41) {
         color: f.priority === k ? "white" : v.c
       }
     }, v.l);
-  })), /*#__PURE__*/React.createElement(Lbl, null, "Notas (opcional)"), /*#__PURE__*/React.createElement("textarea", {
+  })), /*#__PURE__*/React.createElement(Lbl, null, "Notes (optional)"), /*#__PURE__*/React.createElement("textarea", {
     value: f.notes,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -5741,7 +5875,7 @@ function MAddTask(_ref41) {
       resize: "none",
       display: "block"
     }
-  }));
+  }), /*#__PURE__*/React.createElement("style", null, "@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}"));
 }
 
 const _root = ReactDOM.createRoot(document.getElementById("root"));
