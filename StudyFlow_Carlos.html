@@ -5,8 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="StudyFlow"/>
   <meta name="theme-color" content="#1a1a2e"/>
   <title>StudyFlow</title>
+  <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIlN0dWR5RmxvdyIsCiAgInNob3J0X25hbWUiOiAiU3R1ZHlGbG93IiwKICAiZGVzY3JpcHRpb24iOiAiU2Nob29sIHBsYW5uZXIgZm9yIENhcmxvcyIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMWExYTJlIiwKICAidGhlbWVfY29sb3IiOiAiIzFhMWEyZSIsCiAgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhacFpYZENiM2c5SWpBZ01DQTFNVElnTlRFeUlqNEtJQ0E4Y21WamRDQjNhV1IwYUQwaU5URXlJaUJvWldsbmFIUTlJalV4TWlJZ2NuZzlJakV4TlNJZ1ptbHNiRDBpSXpGaE1XRXlaU0l2UGdvZ0lEd2hMUzBnVDNKaWFYUmhiQ0J5YVc1bmN5QXRMVDRLSUNBOFpXeHNhWEJ6WlNCamVEMGlNalUySWlCamVUMGlNalUySWlCeWVEMGlNVGd3SWlCeWVUMGlPREFpSUdacGJHdzlJbTV2Ym1VaUlITjBjbTlyWlQwaUl6UkZRMFJETkNJZ2MzUnliMnRsTFhkcFpIUm9QU0l4TUNJZ2IzQmhZMmwwZVQwaU1DNDVJaTgrQ2lBZ1BHVnNiR2x3YzJVZ1kzZzlJakkxTmlJZ1kzazlJakkxTmlJZ2NuZzlJakU0TUNJZ2NuazlJamd3SWlCbWFXeHNQU0p1YjI1bElpQnpkSEp2YTJVOUlpTTBSVU5FUXpRaUlITjBjbTlyWlMxM2FXUjBhRDBpTVRBaUlHOXdZV05wZEhrOUlqQXVPU0lnZEhKaGJuTm1iM0p0UFNKeWIzUmhkR1VvTmpBc01qVTJMREkxTmlraUx6NEtJQ0E4Wld4c2FYQnpaU0JqZUQwaU1qVTJJaUJqZVQwaU1qVTJJaUJ5ZUQwaU1UZ3dJaUJ5ZVQwaU9EQWlJR1pwYkd3OUltNXZibVVpSUhOMGNtOXJaVDBpSXpSRlEwUkROQ0lnYzNSeWIydGxMWGRwWkhSb1BTSXhNQ0lnYjNCaFkybDBlVDBpTUM0NUlpQjBjbUZ1YzJadmNtMDlJbkp2ZEdGMFpTZ3hNakFzTWpVMkxESTFOaWtpTHo0S0lDQThJUzB0SUU1MVkyeGxkWE1nYjNWMFpYSWdaMnh2ZHlBdExUNEtJQ0E4WTJseVkyeGxJR040UFNJeU5UWWlJR041UFNJeU5UWWlJSEk5SWpVeUlpQm1hV3hzUFNJalJrWTJRalpDSWlCdmNHRmphWFI1UFNJd0xqTWlMejRLSUNBOElTMHRJRTUxWTJ4bGRYTWdMUzArQ2lBZ1BHTnBjbU5zWlNCamVEMGlNalUySWlCamVUMGlNalUySWlCeVBTSTBNaUlnWm1sc2JEMGlJMFpHTmtJMlFpSXZQZ29nSUR4amFYSmpiR1VnWTNnOUlqSTFOaUlnWTNrOUlqSTFOaUlnY2owaU1qUWlJR1pwYkd3OUlpTkdSa1UyTmtRaUx6NEtJQ0E4SVMwdElFVnNaV04wY205dWN5QXRMVDRLSUNBOFkybHlZMnhsSUdONFBTSTBNellpSUdONVBTSXlOVFlpSUhJOUlqRTRJaUJtYVd4c1BTSWpORVZEUkVNMElpOCtDaUFnUEdOcGNtTnNaU0JqZUQwaU1UWTJJaUJqZVQwaU1URXlJaUJ5UFNJeE9DSWdabWxzYkQwaUl6UkZRMFJETkNJdlBnb2dJRHhqYVhKamJHVWdZM2c5SWpFMk5pSWdZM2s5SWpRd01DSWdjajBpTVRnaUlHWnBiR3c5SWlNMFJVTkVRelFpTHo0S0lDQThJUzB0SUZOd1lYSnJiR1VnWkc5MGN5QXRMVDRLSUNBOFkybHlZMnhsSUdONFBTSTRNQ0lnWTNrOUlqRXlNQ0lnY2owaU9DSWdabWxzYkQwaUkwWkdSVUZCTnlJZ2IzQmhZMmwwZVQwaU1DNDNJaTgrQ2lBZ1BHTnBjbU5zWlNCamVEMGlORFF3SWlCamVUMGlOREl3SWlCeVBTSTJJaUJtYVd4c1BTSWpSa1pGUVVFM0lpQnZjR0ZqYVhSNVBTSXdMalVpTHo0S0lDQThZMmx5WTJ4bElHTjRQU0kwTXpBaUlHTjVQU0l4TURBaUlISTlJalVpSUdacGJHdzlJbmRvYVhSbElpQnZjR0ZqYVhSNVBTSXdMalFpTHo0S1BDOXpkbWMrIiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9CiAgXQp9"/>
+  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExNSIgZmlsbD0iIzFhMWEyZSIvPgogIDwhLS0gT3JiaXRhbCByaW5ncyAtLT4KICA8ZWxsaXBzZSBjeD0iMjU2IiBjeT0iMjU2IiByeD0iMTgwIiByeT0iODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzRFQ0RDNCIgc3Ryb2tlLXdpZHRoPSIxMCIgb3BhY2l0eT0iMC45Ii8+CiAgPGVsbGlwc2UgY3g9IjI1NiIgY3k9IjI1NiIgcng9IjE4MCIgcnk9IjgwIiBmaWxsPSJub25lIiBzdHJva2U9IiM0RUNEQzQiIHN0cm9rZS13aWR0aD0iMTAiIG9wYWNpdHk9IjAuOSIgdHJhbnNmb3JtPSJyb3RhdGUoNjAsMjU2LDI1NikiLz4KICA8ZWxsaXBzZSBjeD0iMjU2IiBjeT0iMjU2IiByeD0iMTgwIiByeT0iODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzRFQ0RDNCIgc3Ryb2tlLXdpZHRoPSIxMCIgb3BhY2l0eT0iMC45IiB0cmFuc2Zvcm09InJvdGF0ZSgxMjAsMjU2LDI1NikiLz4KICA8IS0tIE51Y2xldXMgb3V0ZXIgZ2xvdyAtLT4KICA8Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjUyIiBmaWxsPSIjRkY2QjZCIiBvcGFjaXR5PSIwLjMiLz4KICA8IS0tIE51Y2xldXMgLS0+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSI0MiIgZmlsbD0iI0ZGNkI2QiIvPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjQiIGZpbGw9IiNGRkU2NkQiLz4KICA8IS0tIEVsZWN0cm9ucyAtLT4KICA8Y2lyY2xlIGN4PSI0MzYiIGN5PSIyNTYiIHI9IjE4IiBmaWxsPSIjNEVDREM0Ii8+CiAgPGNpcmNsZSBjeD0iMTY2IiBjeT0iMTEyIiByPSIxOCIgZmlsbD0iIzRFQ0RDNCIvPgogIDxjaXJjbGUgY3g9IjE2NiIgY3k9IjQwMCIgcj0iMTgiIGZpbGw9IiM0RUNEQzQiLz4KICA8IS0tIFNwYXJrbGUgZG90cyAtLT4KICA8Y2lyY2xlIGN4PSI4MCIgY3k9IjEyMCIgcj0iOCIgZmlsbD0iI0ZGRUFBNyIgb3BhY2l0eT0iMC43Ii8+CiAgPGNpcmNsZSBjeD0iNDQwIiBjeT0iNDIwIiByPSI2IiBmaWxsPSIjRkZFQUE3IiBvcGFjaXR5PSIwLjUiLz4KICA8Y2lyY2xlIGN4PSI0MzAiIGN5PSIxMDAiIHI9IjUiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjQiLz4KPC9zdmc+"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExNSIgZmlsbD0iIzFhMWEyZSIvPgogIDwhLS0gT3JiaXRhbCByaW5ncyAtLT4KICA8ZWxsaXBzZSBjeD0iMjU2IiBjeT0iMjU2IiByeD0iMTgwIiByeT0iODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzRFQ0RDNCIgc3Ryb2tlLXdpZHRoPSIxMCIgb3BhY2l0eT0iMC45Ii8+CiAgPGVsbGlwc2UgY3g9IjI1NiIgY3k9IjI1NiIgcng9IjE4MCIgcnk9IjgwIiBmaWxsPSJub25lIiBzdHJva2U9IiM0RUNEQzQiIHN0cm9rZS13aWR0aD0iMTAiIG9wYWNpdHk9IjAuOSIgdHJhbnNmb3JtPSJyb3RhdGUoNjAsMjU2LDI1NikiLz4KICA8ZWxsaXBzZSBjeD0iMjU2IiBjeT0iMjU2IiByeD0iMTgwIiByeT0iODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzRFQ0RDNCIgc3Ryb2tlLXdpZHRoPSIxMCIgb3BhY2l0eT0iMC45IiB0cmFuc2Zvcm09InJvdGF0ZSgxMjAsMjU2LDI1NikiLz4KICA8IS0tIE51Y2xldXMgb3V0ZXIgZ2xvdyAtLT4KICA8Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjUyIiBmaWxsPSIjRkY2QjZCIiBvcGFjaXR5PSIwLjMiLz4KICA8IS0tIE51Y2xldXMgLS0+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSI0MiIgZmlsbD0iI0ZGNkI2QiIvPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjQiIGZpbGw9IiNGRkU2NkQiLz4KICA8IS0tIEVsZWN0cm9ucyAtLT4KICA8Y2lyY2xlIGN4PSI0MzYiIGN5PSIyNTYiIHI9IjE4IiBmaWxsPSIjNEVDREM0Ii8+CiAgPGNpcmNsZSBjeD0iMTY2IiBjeT0iMTEyIiByPSIxOCIgZmlsbD0iIzRFQ0RDNCIvPgogIDxjaXJjbGUgY3g9IjE2NiIgY3k9IjQwMCIgcj0iMTgiIGZpbGw9IiM0RUNEQzQiLz4KICA8IS0tIFNwYXJrbGUgZG90cyAtLT4KICA8Y2lyY2xlIGN4PSI4MCIgY3k9IjEyMCIgcj0iOCIgZmlsbD0iI0ZGRUFBNyIgb3BhY2l0eT0iMC43Ii8+CiAgPGNpcmNsZSBjeD0iNDQwIiBjeT0iNDIwIiByPSI2IiBmaWxsPSIjRkZFQUE3IiBvcGFjaXR5PSIwLjUiLz4KICA8Y2lyY2xlIGN4PSI0MzAiIGN5PSIxMDAiIHI9IjUiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjQiLz4KPC9zdmc+"/>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     html, body { height:100%; overflow:hidden; background:#1a1a2e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
@@ -197,13 +202,13 @@ var TYPS = ["Exam", "Assignment", "Exercises", "Reading", "Project", "Other"];
 var SUBS = ["Mathematics", "Language", "English", "History", "Physics", "Chemistry", "Biology", "P.E.", "Technology"];
 var INIT = {
   schedule: {
-    Lunes: [],
-    Martes: [],
-    Miércoles: [],
-    Jueves: [],
-    Viernes: [],
-    Sábado: [],
-    Domingo: []
+    Monday: [],
+    Tuesday: [],
+    Wednesday: [],
+    Thursday: [],
+    Friday: [],
+    Saturday: [],
+    Sunday: []
   },
   extra: [],
   freeBlocks: [],
@@ -549,6 +554,18 @@ var IC = function IC(_ref3) {
       strokeWidth: "2"
     }, /*#__PURE__*/React.createElement("path", {
       d: "M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+    })),
+    edit: /*#__PURE__*/React.createElement("svg", {
+      width: s,
+      height: s,
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: "2"
+    }, /*#__PURE__*/React.createElement("path", {
+      d: "M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
     }))
   };
   return icons[n] || null;
@@ -685,7 +702,7 @@ function Card(_ref9) {
       border: "none",
       cursor: "pointer"
     }
-  }, "Ver todo \u2192")), children);
+  }, "See all \u2192")), children);
 }
 function SubCard(_ref0) {
   var title = _ref0.title,
@@ -811,7 +828,7 @@ function ModalWrap(_ref1) {
       cursor: "pointer",
       color: "#666"
     }
-  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+  }, "Cancel"), /*#__PURE__*/React.createElement("button", {
     onClick: save,
     style: {
       flex: 2,
@@ -824,7 +841,7 @@ function ModalWrap(_ref1) {
       cursor: "pointer",
       color: "white"
     }
-  }, "Guardar \u2713"))));
+  }, "Save \u2713"))));
 }
 
 // ── App ───────────────────────────────────────────────────────────────────────
@@ -978,7 +995,7 @@ function App() {
   }, /*#__PURE__*/React.createElement(IC, {
     n: "warn",
     s: 13
-  }), urgent, " urgente", urgent > 1 ? "s" : "")), /*#__PURE__*/React.createElement("div", {
+  }), urgent, " urgent", urgent > 1 ? " tasks" : " task")), /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
       overflowY: "auto",
@@ -1426,7 +1443,7 @@ function SchedView(_ref11) {
       color: "#1a1a2e",
       marginBottom: 12
     }
-  }, "Horario Semanal"), /*#__PURE__*/React.createElement("div", {
+  }, "Weekly Schedule"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 4,
@@ -1503,17 +1520,27 @@ function SchedView(_ref11) {
         fontSize: 11,
         color: "#888"
       }
-    }, c.time, c.endTime ? "\u2013".concat(c.endTime) : "", c.room ? " \xB7 Aula ".concat(c.room) : "", c.teacher ? " \xB7 ".concat(c.teacher) : ""), /*#__PURE__*/React.createElement("div", {
+    }, c.time, c.endTime ? "\u2013".concat(c.endTime) : "", c.room ? " \xB7 Room ".concat(c.room) : "", c.teacher ? " \xB7 ".concat(c.teacher) : ""), /*#__PURE__*/React.createElement("div", {
       style: {
         fontSize: 10,
         marginTop: 2,
         color: c.repeatsWeekly ? "#4ECDC4" : "#bbb",
         fontWeight: 600
       }
-    }, c.repeatsWeekly ? "\uD83D\uDD01 Semanal hasta ".concat(c.repeatUntil ? new Date(c.repeatUntil + "T00:00:00").toLocaleDateString("en-GB", {
+    }, c.repeatsWeekly ? "\uD83D\uDD01 Weekly until ".concat(c.repeatUntil ? new Date(c.repeatUntil + "T00:00:00").toLocaleDateString("en-GB", {
       day: "numeric",
       month: "short"
-    }) : "fin de curso") : "📌 Solo este día")), /*#__PURE__*/React.createElement(Btn, {
+    }) : "end of year") : "📌 This day only")), /*#__PURE__*/React.createElement(Btn, {
+      icon: "edit",
+      onClick: function onClick() {
+        return setModal({
+          type: "editClass",
+          day: dn,
+          idx: i,
+          cls: c
+        });
+      }
+    }), /*#__PURE__*/React.createElement(Btn, {
       icon: "trash",
       onClick: function onClick() {
         return upd(function (d) {
@@ -1626,53 +1653,53 @@ function LifeView(_ref12) {
     return s + bh(b) * (b.days || []).length;
   }, 0);
   var QUICK = [{
-    name: "Comida",
+    name: "Lunch",
     type: "comida",
     startTime: "14:00",
     endTime: "15:00",
     days: [].concat(D5)
   }, {
-    name: "Desayuno",
+    name: "Breakfast",
     type: "comida",
     startTime: "07:30",
     endTime: "08:00",
     days: [].concat(D7)
   }, {
-    name: "Cena",
+    name: "Dinner",
     type: "comida",
     startTime: "21:00",
     endTime: "21:30",
     days: [].concat(D7)
   }, {
-    name: "Videojuegos",
+    name: "Video games",
     type: "ocio",
     startTime: "18:00",
     endTime: "19:30",
     days: [].concat(D5)
   }, {
-    name: "Series / TV",
+    name: "TV / Series",
     type: "ocio",
     startTime: "21:30",
     endTime: "22:30",
     days: [].concat(D7)
   }, {
-    name: "Siesta",
+    name: "Nap",
     type: "siesta",
     startTime: "15:00",
     endTime: "15:30",
     days: [].concat(D5)
   }, {
-    name: "Fútbol",
+    name: "Football",
     type: "deporte",
     startTime: "18:00",
     endTime: "19:00",
-    days: ["Sábado"]
+    days: ["Saturday"]
   }, {
-    name: "Familia",
+    name: "Family",
     type: "familia",
     startTime: "19:00",
     endTime: "21:00",
-    days: ["Sábado", "Domingo"]
+    days: ["Saturday", "Sunday"]
   }];
   return /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1691,7 +1718,7 @@ function LifeView(_ref12) {
       fontWeight: 900,
       color: "#1a1a2e"
     }
-  }, "Comidas & Ocio"), /*#__PURE__*/React.createElement("button", {
+  }, "Meals & Leisure"), /*#__PURE__*/React.createElement("button", {
     style: {
       display: "flex",
       alignItems: "center",
@@ -1713,7 +1740,7 @@ function LifeView(_ref12) {
   }, /*#__PURE__*/React.createElement(IC, {
     n: "plus",
     s: 16
-  }), " A\xF1adir")), /*#__PURE__*/React.createElement("div", {
+  }), " Add")), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "#f0edff",
       border: "1px solid #c9b8f0",
@@ -1734,7 +1761,7 @@ function LifeView(_ref12) {
       color: "#7a6a9a",
       lineHeight: 1.5
     }
-  }, "Total blocked: ", /*#__PURE__*/React.createElement("b", null, total.toFixed(1), "h/weekana"))), blocks.length === 0 && /*#__PURE__*/React.createElement("div", {
+  }, "Total blocked: ", /*#__PURE__*/React.createElement("b", null, total.toFixed(1), "h/week"))), blocks.length === 0 && /*#__PURE__*/React.createElement("div", {
     style: {
       textAlign: "center",
       padding: "24px 0 12px",
@@ -1745,7 +1772,7 @@ function LifeView(_ref12) {
       fontSize: 48,
       marginBottom: 8
     }
-  }, "\uD83C\uDF7D\uFE0F"), /*#__PURE__*/React.createElement("div", null, "A\xF1ade tus comidas y ocio")), blocks.map(function (b, i) {
+  }, "\uD83C\uDF7D\uFE0F"), /*#__PURE__*/React.createElement("div", null, "Add your meals and leisure")), blocks.map(function (b, i) {
     var bt = BT[b.type] || BT.otro,
       h = bh(b),
       dc = (b.days || []).length;
@@ -1791,7 +1818,7 @@ function LifeView(_ref12) {
       style: {
         color: bt.c
       }
-    }, h.toFixed(1), "h/d\xEDa")), /*#__PURE__*/React.createElement("div", {
+    }, h.toFixed(1), "h/day")), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         flexWrap: "wrap",
@@ -1816,7 +1843,7 @@ function LifeView(_ref12) {
         color: "#bbb",
         marginTop: 4
       }
-    }, dc, " d\xEDa", dc !== 1 ? "s" : "", "/sem \xB7 ", (h * dc).toFixed(1), "h semanal")), /*#__PURE__*/React.createElement(Btn, {
+    }, dc, " day", dc !== 1 ? "s" : "", "/week \xB7 ", (h * dc).toFixed(1), "h weekly")), /*#__PURE__*/React.createElement(Btn, {
       icon: "trash",
       onClick: function onClick() {
         return upd(function (d) {
@@ -1843,7 +1870,7 @@ function LifeView(_ref12) {
       color: "#555",
       marginBottom: 8
     }
-  }, "Resumen semanal"), Object.entries(BT).map(function (_ref13) {
+  }, "Weekly summary"), Object.entries(BT).map(function (_ref13) {
     var _ref14 = _slicedToArray(_ref13, 2),
       key = _ref14[0],
       bt = _ref14[1];
@@ -1913,7 +1940,7 @@ function LifeView(_ref12) {
       color: "#888",
       marginBottom: 10
     }
-  }, "\uD83D\uDCA1 A\xF1adir r\xE1pido"), /*#__PURE__*/React.createElement("div", {
+  }, "\uD83D\uDCA1 Quick add"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       flexWrap: "wrap",
@@ -2032,7 +2059,7 @@ function TasksView(_ref15) {
       fontWeight: 900,
       color: "#1a1a2e"
     }
-  }, "Tareas & Ex\xE1menes"), /*#__PURE__*/React.createElement("button", {
+  }, "Tasks & Exams"), /*#__PURE__*/React.createElement("button", {
     style: {
       display: "flex",
       alignItems: "center",
@@ -2108,7 +2135,7 @@ function TasksView(_ref15) {
     style: {
       fontSize: 48
     }
-  }, "\u2705"), "\xA1Sin tareas aqu\xED!"), list.map(function (t) {
+  }, "\u2705"), "No tasks here!"), list.map(function (t) {
     var days = t.dueDate ? du(t.dueDate) : null,
       p = PR[t.priority || "media"];
     var prog = t.progress || 0;
@@ -2370,7 +2397,7 @@ function PlanView(_ref16) {
       color: "#1a1a2e",
       marginBottom: 12
     }
-  }, "Planificador"), /*#__PURE__*/React.createElement("div", {
+  }, "Planner"), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "white",
       borderRadius: 14,
@@ -2385,7 +2412,7 @@ function PlanView(_ref16) {
       lineHeight: 1.6,
       marginBottom: 10
     }
-  }, "\uD83D\uDCCA Distribuye el estudio respetando clases, extraescolares, comidas y ocio."), /*#__PURE__*/React.createElement("div", {
+  }, "\uD83D\uDCCA Distribuye el estudio respetando classs, extraescolares, comidas y ocio."), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       justifyContent: "space-between",
@@ -2396,7 +2423,7 @@ function PlanView(_ref16) {
     style: {
       fontSize: 13
     }
-  }, "Horas activas/d\xEDa"), /*#__PURE__*/React.createElement("span", {
+  }, "Active hours/day"), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 15,
       fontWeight: 800,
@@ -2557,7 +2584,7 @@ function PlanView(_ref16) {
         fontSize: 10,
         color: "#bbb"
       }
-    }, fL.toFixed(1), "h libre")), slots.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    }, fL.toFixed(1), "h leisure")), slots.length === 0 ? /*#__PURE__*/React.createElement("div", {
       style: {
         fontSize: 12,
         color: "#ccc",
@@ -2741,7 +2768,7 @@ function CalView(_ref17) {
         color: "#555",
         marginBottom: 8
       }
-    }, "Leyenda"), /*#__PURE__*/React.createElement("div", {
+    }, "Legend"), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         flexWrap: "wrap",
@@ -3023,7 +3050,7 @@ function dayEvents(data, planned, dn, dateStr) {
       label: c.subject,
       color: CL[data.subjects.indexOf(c.subject) % CL.length],
       textColor: "#fff",
-      kind: "clase",
+      kind: "class",
       fallbackH: 1
     };
   });
@@ -3050,7 +3077,7 @@ function dayEvents(data, planned, dn, dateStr) {
       label: b.name,
       color: bt.c,
       textColor: "#fff",
-      kind: "libre",
+      kind: "leisure",
       emoji: bt.e,
       fallbackH: 1
     };
@@ -3672,7 +3699,7 @@ function DayGrid(_ref22) {
     style: {
       fontSize: 14
     }
-  }, "D\xEDa libre \u2014 sin actividades")));
+  }, "D\xEDa leisure \u2014 sin actividades")));
 }
 
 // ── Settings ──────────────────────────────────────────────────────────────────
@@ -3746,7 +3773,7 @@ function CfgView(_ref23) {
       color: "#1a1a2e",
       marginBottom: 14
     }
-  }, "\u2699\uFE0F Ajustes"), /*#__PURE__*/React.createElement("div", {
+  }, "\u2699\uFE0F Settings"), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "white",
       borderRadius: 14,
@@ -3761,7 +3788,7 @@ function CfgView(_ref23) {
       color: "#1a1a2e",
       marginBottom: 10
     }
-  }, "\uD83D\uDC64 Nombre del alumno"), /*#__PURE__*/React.createElement("div", {
+  }, "\uD83D\uDC64 Student name"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 8
@@ -3788,7 +3815,7 @@ function CfgView(_ref23) {
       cursor: "pointer",
       flexShrink: 0
     }
-  }, "Guardar"))), /*#__PURE__*/React.createElement("div", {
+  }, "Save"))), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "white",
       borderRadius: 14,
@@ -3803,13 +3830,13 @@ function CfgView(_ref23) {
       color: "#1a1a2e",
       marginBottom: 4
     }
-  }, "\uD83C\uDF93 Fin de curso"), /*#__PURE__*/React.createElement("div", {
+  }, "\uD83C\uDF93 End of school year"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#888",
       marginBottom: 8
     }
-  }, "\xDAltimo d\xEDa de clase \u2014 aparece como acceso r\xE1pido al a\xF1adir clases"), /*#__PURE__*/React.createElement(DatePick, {
+  }, "\xDAltimo d\xEDa de class \u2014 aparece como acceso r\xE1pido al a\xF1adir classs"), /*#__PURE__*/React.createElement(DatePick, {
     label: "",
     value: data.finCurso || "",
     onChange: function onChange(v) {
@@ -3841,14 +3868,14 @@ function CfgView(_ref23) {
       color: "#1a1a2e",
       marginBottom: 4
     }
-  }, "\uD83C\uDFD6\uFE0F Festivos y vacaciones"), /*#__PURE__*/React.createElement("div", {
+  }, "\uD83C\uDFD6\uFE0F Holidays & vacations"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#888",
       marginBottom: 12,
       lineHeight: 1.5
     }
-  }, "El planificador no asignar\xE1 estudio en estos d\xEDas."), holidays.length === 0 && /*#__PURE__*/React.createElement("div", {
+  }, "The planner will not assign study on these days."), holidays.length === 0 && /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#ccc",
@@ -3905,7 +3932,7 @@ function CfgView(_ref23) {
       color: "#555",
       marginBottom: 8
     }
-  }, "A\xF1adir festivo"), /*#__PURE__*/React.createElement(Lbl, null, "Nombre"), /*#__PURE__*/React.createElement(Inp, {
+  }, "Add holiday"), /*#__PURE__*/React.createElement(Lbl, null, "Name"), /*#__PURE__*/React.createElement(Inp, {
     placeholder: "E.g.: Christmas, Easter, Bank holiday...",
     value: newHol.name,
     onChange: function onChange(e) {
@@ -3970,7 +3997,7 @@ function CfgView(_ref23) {
       fontWeight: 700,
       cursor: "pointer"
     }
-  }, "+ A\xF1adir festivo"))), /*#__PURE__*/React.createElement("div", {
+  }, "+ Add holiday"))), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "white",
       borderRadius: 14,
@@ -3985,14 +4012,14 @@ function CfgView(_ref23) {
       color: "#1a1a2e",
       marginBottom: 4
     }
-  }, "\uD83C\uDF45 Bloques de estudio"), /*#__PURE__*/React.createElement("div", {
+  }, "\uD83C\uDF45 Study blocks"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#888",
       marginBottom: 12,
       lineHeight: 1.5
     }
-  }, "Define cu\xE1nto estudia Carlos seguido y cu\xE1nto descansa. El planificador lo tiene en cuenta."), /*#__PURE__*/React.createElement("div", {
+  }, "Define how long Carlos studies and rests. The planner takes this into account."), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       justifyContent: "space-between",
@@ -4088,7 +4115,7 @@ function CfgView(_ref23) {
       color: "#1a1a2e",
       marginBottom: 4
     }
-  }, "\u23F0 Horas activas al d\xEDa"), /*#__PURE__*/React.createElement("div", {
+  }, "\u23F0 Active hours per day"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#888",
@@ -4158,6 +4185,14 @@ function ModalRouter(_ref24) {
     upd = _ref24.upd;
   if (m.type === "addClass") return /*#__PURE__*/React.createElement(MAddClass, {
     day: m.day,
+    data: data,
+    upd: upd,
+    close: close
+  });
+  if (m.type === "editClass") return /*#__PURE__*/React.createElement(MEditClass, {
+    day: m.day,
+    idx: m.idx,
+    cls: m.cls,
     data: data,
     upd: upd,
     close: close
@@ -4313,7 +4348,7 @@ function MAddClass(_ref26) {
     title: "Add class \u2014 ".concat(day),
     close: close,
     save: save
-  }, /*#__PURE__*/React.createElement(Lbl, null, "Asignatura"), /*#__PURE__*/React.createElement(Sel, {
+  }, /*#__PURE__*/React.createElement(Lbl, null, "Subject"), /*#__PURE__*/React.createElement(Sel, {
     value: f.subject,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -4493,7 +4528,7 @@ function MAddClass(_ref26) {
       padding: "6px 10px",
       marginBottom: 10
     }
-  }, "\uD83D\uDCA1 Configura las fechas del curso en ", /*#__PURE__*/React.createElement("b", null, "Ajustes"), " para acceder a ellas r\xE1pidamente"), /*#__PURE__*/React.createElement(DatePick, {
+  }, "\uD83D\uDCA1 Set up school dates in ", /*#__PURE__*/React.createElement("b", null, "Settings"), " for quick access"), /*#__PURE__*/React.createElement(DatePick, {
     label: "Or choose a specific date",
     value: untilDate,
     onChange: function onChange(v) {
@@ -4538,20 +4573,297 @@ function MAddClass(_ref26) {
     }
   }));
 }
-function MAddExtra(_ref27) {
-  var data = _ref27.data,
+function MEditClass(_ref27) {
+  var day = _ref27.day,
+    idx = _ref27.idx,
+    cls = _ref27.cls,
+    data = _ref27.data,
     upd = _ref27.upd,
     close = _ref27.close;
+  var now = new Date();
+  var defaultUntil = data.finCurso || (now.getMonth() < 6 ? "".concat(now.getFullYear(), "-06-20") : "".concat(now.getFullYear() + 1, "-06-20"));
   var _useState33 = useState({
-      name: "",
-      day: "Lunes",
-      startTime: "17:00",
-      endTime: "18:00",
-      color: "#4ECDC4"
+      subject: cls.subject || data.subjects[0] || "",
+      time: cls.time || "08:00",
+      endTime: cls.endTime || "09:00",
+      teacher: cls.teacher || "",
+      room: cls.room || "",
+      repeatsWeekly: cls.repeatsWeekly !== false,
+      repeatUntil: cls.repeatUntil || defaultUntil
     }),
     _useState34 = _slicedToArray(_useState33, 2),
     f = _useState34[0],
     setF = _useState34[1];
+  var _useState35 = useState(""),
+    _useState36 = _slicedToArray(_useState35, 2),
+    custom = _useState36[0],
+    setCustom = _useState36[1];
+  var save = function save() {
+    var subj = f.subject === "__new__" ? custom : f.subject;
+    if (!subj || !f.time) return;
+    var updated = _objectSpread(_objectSpread({}, f), {}, {
+      subject: subj,
+      repeatUntil: f.repeatsWeekly ? f.repeatUntil || defaultUntil : ""
+    });
+    upd(function (d) {
+      return _objectSpread(_objectSpread({}, d), {}, {
+        schedule: _objectSpread(_objectSpread({}, d.schedule), {}, _defineProperty({}, day, d.schedule[day].map(function (c, i) {
+          return i === idx ? updated : c;
+        }))),
+        subjects: f.subject === "__new__" && !d.subjects.includes(custom) ? [].concat(_toConsumableArray(d.subjects), [custom]) : d.subjects
+      });
+    });
+    close();
+  };
+  var dur = function () {
+    var _f$time$split$map3 = f.time.split(":").map(Number),
+      _f$time$split$map4 = _slicedToArray(_f$time$split$map3, 2),
+      sh = _f$time$split$map4[0],
+      sm = _f$time$split$map4[1];
+    var _f$endTime$split$map3 = f.endTime.split(":").map(Number),
+      _f$endTime$split$map4 = _slicedToArray(_f$endTime$split$map3, 2),
+      eh = _f$endTime$split$map4[0],
+      em = _f$endTime$split$map4[1];
+    return eh * 60 + em - (sh * 60 + sm);
+  }();
+  var untilLabel = function () {
+    try {
+      return new Date((f.repeatUntil || "") + "T00:00:00").toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
+    } catch (_unused3) {
+      return f.repeatUntil;
+    }
+  }();
+  var presets = [data.finCurso && {
+    l: "End of year",
+    v: data.finCurso
+  }].filter(Boolean);
+  return /*#__PURE__*/React.createElement(ModalWrap, {
+    title: "Edit class \u2014 ".concat(day),
+    close: close,
+    save: save
+  }, /*#__PURE__*/React.createElement(Lbl, null, "Subject"), /*#__PURE__*/React.createElement(Sel, {
+    value: f.subject,
+    onChange: function onChange(e) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          subject: e.target.value
+        });
+      });
+    }
+  }, data.subjects.map(function (s) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: s
+    }, s);
+  }), /*#__PURE__*/React.createElement("option", {
+    value: "__new__"
+  }, "+ New subject...")), f.subject === "__new__" && /*#__PURE__*/React.createElement(Inp, {
+    style: {
+      marginTop: 6
+    },
+    placeholder: "Subject name",
+    value: custom,
+    onChange: function onChange(e) {
+      return setCustom(e.target.value);
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 12,
+      marginTop: 4
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement(TimePick, {
+    label: "Start time",
+    value: f.time,
+    onChange: function onChange(v) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          time: v
+        });
+      });
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement(TimePick, {
+    label: "End time",
+    value: f.endTime,
+    onChange: function onChange(v) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          endTime: v
+        });
+      });
+    }
+  }))), dur > 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#f0fffe",
+      border: "1px solid #4ECDC4",
+      borderRadius: 10,
+      padding: "8px 12px",
+      marginTop: 8,
+      fontSize: 13,
+      color: "#4ECDC4",
+      fontWeight: 700
+    }
+  }, "Duration: ", dur, " min \xB7 ", (dur / 60).toFixed(1), "h"), dur <= 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fff0f0",
+      border: "1px solid #FF6B6B",
+      borderRadius: 10,
+      padding: "8px 12px",
+      marginTop: 8,
+      fontSize: 12,
+      color: "#FF6B6B",
+      fontWeight: 700
+    }
+  }, "End time must be after start time"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#f8f9fb",
+      borderRadius: 12,
+      padding: "12px 14px",
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: f.repeatsWeekly ? 10 : 0
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      fontWeight: 800,
+      color: "#1a1a2e"
+    }
+  }, "Repeats every week"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#888",
+      marginTop: 2
+    }
+  }, "Every ", day, " throughout the year")), /*#__PURE__*/React.createElement("div", {
+    onClick: function onClick() {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          repeatsWeekly: !x.repeatsWeekly
+        });
+      });
+    },
+    style: {
+      width: 48,
+      height: 26,
+      borderRadius: 13,
+      background: f.repeatsWeekly ? "#4ECDC4" : "#ddd",
+      position: "relative",
+      cursor: "pointer",
+      flexShrink: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "absolute",
+      top: 3,
+      left: f.repeatsWeekly ? 24 : 3,
+      width: 20,
+      height: 20,
+      borderRadius: "50%",
+      background: "white",
+      boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+      transition: "left .2s"
+    }
+  }))), f.repeatsWeekly && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: "#555",
+      marginBottom: 8
+    }
+  }, "Repeat until"), presets.length > 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 6,
+      flexWrap: "wrap",
+      marginBottom: 10
+    }
+  }, presets.map(function (p) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: p.l,
+      onClick: function onClick() {
+        return setF(function (x) {
+          return _objectSpread(_objectSpread({}, x), {}, {
+            repeatUntil: p.v
+          });
+        });
+      },
+      style: {
+        border: "1.5px solid ".concat(f.repeatUntil === p.v ? "#4ECDC4" : "#ddd"),
+        background: f.repeatUntil === p.v ? "#f0fffe" : "white",
+        borderRadius: 20,
+        padding: "5px 12px",
+        fontSize: 12,
+        fontWeight: 700,
+        cursor: "pointer",
+        color: f.repeatUntil === p.v ? "#4ECDC4" : "#666"
+      }
+    }, p.l);
+  })), /*#__PURE__*/React.createElement(DatePick, {
+    label: "Or choose a specific date",
+    value: f.repeatUntil,
+    onChange: function onChange(v) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          repeatUntil: v
+        });
+      });
+    }
+  }), f.repeatUntil && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#4ECDC4",
+      fontWeight: 700,
+      marginTop: 6
+    }
+  }, "Repeats every ", day, " until ", untilLabel)), !f.repeatsWeekly && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#aaa",
+      marginTop: 4
+    }
+  }, "Only appears on this specific day")), /*#__PURE__*/React.createElement(Lbl, null, "Teacher (optional)"), /*#__PURE__*/React.createElement(Inp, {
+    placeholder: "Teacher name",
+    value: f.teacher,
+    onChange: function onChange(e) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          teacher: e.target.value
+        });
+      });
+    }
+  }), /*#__PURE__*/React.createElement(Lbl, null, "Classroom (optional)"), /*#__PURE__*/React.createElement(Inp, {
+    placeholder: "E.g.: 102",
+    value: f.room,
+    onChange: function onChange(e) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          room: e.target.value
+        });
+      });
+    }
+  }));
+}
+function MAddExtra(_ref28) {
+  var data = _ref28.data,
+    upd = _ref28.upd,
+    close = _ref28.close;
   var save = function save() {
     if (!f.name) return;
     upd(function (d) {
@@ -4565,7 +4877,7 @@ function MAddExtra(_ref27) {
     title: "Add extracurricular",
     close: close,
     save: save
-  }, /*#__PURE__*/React.createElement(Lbl, null, "Nombre"), /*#__PURE__*/React.createElement(Inp, {
+  }, /*#__PURE__*/React.createElement(Lbl, null, "Name"), /*#__PURE__*/React.createElement(Inp, {
     placeholder: "E.g.: Swimming, English...",
     value: f.name,
     onChange: function onChange(e) {
@@ -4575,7 +4887,7 @@ function MAddExtra(_ref27) {
         });
       });
     }
-  }), /*#__PURE__*/React.createElement(Lbl, null, "D\xEDa"), /*#__PURE__*/React.createElement(Sel, {
+  }), /*#__PURE__*/React.createElement(Lbl, null, "Day"), /*#__PURE__*/React.createElement(Sel, {
     value: f.day,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -4588,7 +4900,7 @@ function MAddExtra(_ref27) {
     return /*#__PURE__*/React.createElement("option", {
       key: d
     }, d);
-  })), /*#__PURE__*/React.createElement(Lbl, null, "Inicio"), /*#__PURE__*/React.createElement(Inp, {
+  })), /*#__PURE__*/React.createElement(Lbl, null, "Start"), /*#__PURE__*/React.createElement(Inp, {
     type: "time",
     value: f.startTime,
     onChange: function onChange(e) {
@@ -4598,7 +4910,7 @@ function MAddExtra(_ref27) {
         });
       });
     }
-  }), /*#__PURE__*/React.createElement(Lbl, null, "Fin"), /*#__PURE__*/React.createElement(Inp, {
+  }), /*#__PURE__*/React.createElement(Lbl, null, "End"), /*#__PURE__*/React.createElement(Inp, {
     type: "time",
     value: f.endTime,
     onChange: function onChange(e) {
@@ -4636,19 +4948,19 @@ function MAddExtra(_ref27) {
     });
   })));
 }
-function MAddBlock(_ref28) {
-  var upd = _ref28.upd,
-    close = _ref28.close;
-  var _useState35 = useState({
+function MAddBlock(_ref29) {
+  var upd = _ref29.upd,
+    close = _ref29.close;
+  var _useState37 = useState({
       name: "",
       type: "comida",
       startTime: "14:00",
       endTime: "15:00",
       days: [].concat(D5)
     }),
-    _useState36 = _slicedToArray(_useState35, 2),
-    f = _useState36[0],
-    setF = _useState36[1];
+    _useState38 = _slicedToArray(_useState37, 2),
+    f = _useState38[0],
+    setF = _useState38[1];
   var save = function save() {
     if (!f.name || !f.days.length) return;
     upd(function (d) {
@@ -4675,17 +4987,17 @@ function MAddBlock(_ref28) {
     title: "Add meal / leisure",
     close: close,
     save: save
-  }, /*#__PURE__*/React.createElement(Lbl, null, "Tipo"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Lbl, null, "Type"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       flexWrap: "wrap",
       gap: 6,
       marginTop: 4
     }
-  }, Object.entries(BT).map(function (_ref29) {
-    var _ref30 = _slicedToArray(_ref29, 2),
-      key = _ref30[0],
-      bt = _ref30[1];
+  }, Object.entries(BT).map(function (_ref30) {
+    var _ref31 = _slicedToArray(_ref30, 2),
+      key = _ref31[0],
+      bt = _ref31[1];
     return /*#__PURE__*/React.createElement("button", {
       key: key,
       onClick: function onClick() {
@@ -4706,7 +5018,7 @@ function MAddBlock(_ref28) {
         cursor: "pointer"
       }
     }, bt.e, " ", bt.l);
-  })), /*#__PURE__*/React.createElement(Lbl, null, "Nombre *"), /*#__PURE__*/React.createElement(Inp, {
+  })), /*#__PURE__*/React.createElement(Lbl, null, "Name *"), /*#__PURE__*/React.createElement(Inp, {
     placeholder: f.type === "comida" ? "Ej: Comida del cole" : f.type === "ocio" ? "Ej: Videojuegos" : "Name",
     value: f.name,
     onChange: function onChange(e) {
@@ -4716,7 +5028,7 @@ function MAddBlock(_ref28) {
         });
       });
     }
-  }), /*#__PURE__*/React.createElement(Lbl, null, "Inicio"), /*#__PURE__*/React.createElement(Inp, {
+  }), /*#__PURE__*/React.createElement(Lbl, null, "Start"), /*#__PURE__*/React.createElement(Inp, {
     type: "time",
     value: f.startTime,
     onChange: function onChange(e) {
@@ -4726,7 +5038,7 @@ function MAddBlock(_ref28) {
         });
       });
     }
-  }), /*#__PURE__*/React.createElement(Lbl, null, "Fin"), /*#__PURE__*/React.createElement(Inp, {
+  }), /*#__PURE__*/React.createElement(Lbl, null, "End"), /*#__PURE__*/React.createElement(Inp, {
     type: "time",
     value: f.endTime,
     onChange: function onChange(e) {
@@ -4743,7 +5055,7 @@ function MAddBlock(_ref28) {
       fontWeight: 700,
       marginTop: 6
     }
-  }, "\u23F1 ", h.toFixed(1), "h por d\xEDa"), /*#__PURE__*/React.createElement(Lbl, null, "D\xEDas *"), /*#__PURE__*/React.createElement("div", {
+  }, "\u23F1 ", h.toFixed(1), "h por d\xEDa"), /*#__PURE__*/React.createElement(Lbl, null, "Days *"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 5,
@@ -4773,10 +5085,10 @@ function MAddBlock(_ref28) {
       gap: 6,
       marginTop: 6
     }
-  }, [["M–F", [].concat(D5)], ["All", [].concat(D7)], ["Weekend", ["Sábado", "Domingo"]], ["None", []]].map(function (_ref31) {
-    var _ref32 = _slicedToArray(_ref31, 2),
-      l = _ref32[0],
-      days = _ref32[1];
+  }, [["M–F", [].concat(D5)], ["All", [].concat(D7)], ["Weekend", ["Saturday", "Domingo"]], ["None", []]].map(function (_ref32) {
+    var _ref33 = _slicedToArray(_ref32, 2),
+      l = _ref33[0],
+      days = _ref33[1];
     return /*#__PURE__*/React.createElement("button", {
       key: l,
       onClick: function onClick() {
@@ -4813,23 +5125,23 @@ function MAddBlock(_ref28) {
 }
 
 // Date picker with 3 selects — always produces "YYYY-MM-DD" format reliably on mobile
-function DatePick(_ref33) {
-  var label = _ref33.label,
-    value = _ref33.value,
-    onChange = _ref33.onChange;
+function DatePick(_ref34) {
+  var label = _ref34.label,
+    value = _ref34.value,
+    onChange = _ref34.onChange;
   var now = new Date();
-  var _useState37 = useState(value ? +value.split("-")[0] : now.getFullYear()),
-    _useState38 = _slicedToArray(_useState37, 2),
-    yr = _useState38[0],
-    setYr = _useState38[1];
-  var _useState39 = useState(value ? +value.split("-")[1] : now.getMonth() + 1),
+  var _useState39 = useState(value ? +value.split("-")[0] : now.getFullYear()),
     _useState40 = _slicedToArray(_useState39, 2),
-    mo = _useState40[0],
-    setMo = _useState40[1];
-  var _useState41 = useState(value ? +value.split("-")[2] : now.getDate()),
+    yr = _useState40[0],
+    setYr = _useState40[1];
+  var _useState41 = useState(value ? +value.split("-")[1] : now.getMonth() + 1),
     _useState42 = _slicedToArray(_useState41, 2),
-    dy = _useState42[0],
-    setDy = _useState42[1];
+    mo = _useState42[0],
+    setMo = _useState42[1];
+  var _useState43 = useState(value ? +value.split("-")[2] : now.getDate()),
+    _useState44 = _slicedToArray(_useState43, 2),
+    dy = _useState44[0],
+    setDy = _useState44[1];
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var daysInMonth = new Date(yr, mo, 0).getDate();
   var years = Array.from({
@@ -4915,13 +5227,13 @@ function DatePick(_ref33) {
     year: "numeric"
   })));
 }
-function MAddTask(_ref34) {
-  var data = _ref34.data,
-    upd = _ref34.upd,
-    close = _ref34.close;
+function MAddTask(_ref35) {
+  var data = _ref35.data,
+    upd = _ref35.upd,
+    close = _ref35.close;
   var now = new Date();
   var initDate = "".concat(now.getFullYear(), "-").concat(String(now.getMonth() + 1).padStart(2, "0"), "-").concat(String(now.getDate()).padStart(2, "0"));
-  var _useState43 = useState({
+  var _useState45 = useState({
       title: "",
       subject: data.subjects[0] || "",
       type: "Examen",
@@ -4930,9 +5242,9 @@ function MAddTask(_ref34) {
       priority: "media",
       notes: ""
     }),
-    _useState44 = _slicedToArray(_useState43, 2),
-    f = _useState44[0],
-    setF = _useState44[1];
+    _useState46 = _slicedToArray(_useState45, 2),
+    f = _useState46[0],
+    setF = _useState46[1];
   var save = function save() {
     if (!f.title || !f.dueDate) return;
     // Normalise date to YYYY-MM-DD just in case
@@ -4953,7 +5265,7 @@ function MAddTask(_ref34) {
     title: "New task / exam",
     close: close,
     save: save
-  }, /*#__PURE__*/React.createElement(Lbl, null, "T\xEDtulo *"), /*#__PURE__*/React.createElement(Inp, {
+  }, /*#__PURE__*/React.createElement(Lbl, null, "Title *"), /*#__PURE__*/React.createElement(Inp, {
     placeholder: "E.g.: Maths Exam Topic 5",
     value: f.title,
     onChange: function onChange(e) {
@@ -4963,7 +5275,7 @@ function MAddTask(_ref34) {
         });
       });
     }
-  }), /*#__PURE__*/React.createElement(Lbl, null, "Asignatura"), /*#__PURE__*/React.createElement(Sel, {
+  }), /*#__PURE__*/React.createElement(Lbl, null, "Subject"), /*#__PURE__*/React.createElement(Sel, {
     value: f.subject,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -4976,7 +5288,7 @@ function MAddTask(_ref34) {
     return /*#__PURE__*/React.createElement("option", {
       key: s
     }, s);
-  })), /*#__PURE__*/React.createElement(Lbl, null, "Tipo"), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement(Lbl, null, "Type"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       flexWrap: "wrap",
@@ -5014,7 +5326,7 @@ function MAddTask(_ref34) {
         });
       });
     }
-  }), /*#__PURE__*/React.createElement(Lbl, null, "Horas estimadas: ", /*#__PURE__*/React.createElement("b", null, f.estimatedHours, "h")), /*#__PURE__*/React.createElement("input", {
+  }), /*#__PURE__*/React.createElement(Lbl, null, "Estimated hours: ", /*#__PURE__*/React.createElement("b", null, f.estimatedHours, "h")), /*#__PURE__*/React.createElement("input", {
     type: "range",
     min: "0.5",
     max: "30",
@@ -5031,16 +5343,16 @@ function MAddTask(_ref34) {
       width: "100%",
       accentColor: "#4ECDC4"
     }
-  }), /*#__PURE__*/React.createElement(Lbl, null, "Prioridad"), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement(Lbl, null, "Priority"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 8,
       marginTop: 4
     }
-  }, Object.entries(PR).map(function (_ref35) {
-    var _ref36 = _slicedToArray(_ref35, 2),
-      k = _ref36[0],
-      v = _ref36[1];
+  }, Object.entries(PR).map(function (_ref36) {
+    var _ref37 = _slicedToArray(_ref36, 2),
+      k = _ref37[0],
+      v = _ref37[1];
     return /*#__PURE__*/React.createElement("button", {
       key: k,
       onClick: function onClick() {
