@@ -210,6 +210,7 @@ var INIT = {
   tasks: [],
   subjects: SUBS,
   hpd: 10,
+  maxStudyPerDay: 3,
   courseDates: {
     navidad: "2025-12-20",
     semanaSanta: "2026-04-02",
@@ -259,7 +260,8 @@ function wd() {
     return d.toISOString().split("T")[0];
   });
 }
-function plan(tasks, schedule, extra, fb, hpd) {
+function plan(tasks, schedule, extra, fb, hpd, maxSpd) {
+  var MAX_STUDY_PER_DAY = maxSpd || 3;
   var p = {},
     pend = tasks.filter(function (t) {
       return !t.done && t.dueDate && t.estimatedHours > 0;
@@ -267,17 +269,16 @@ function plan(tasks, schedule, extra, fb, hpd) {
       return new Date(a.dueDate) - new Date(b.dueDate);
     });
   var now = new Date();
-  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // local midnight, no UTC shift
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   pend.forEach(function (task) {
     var rem = task.estimatedHours,
       d = new Date(today),
       att = 0;
     var _loop = function _loop() {
       var ds = "".concat(d.getFullYear(), "-").concat(String(d.getMonth() + 1).padStart(2, "0"), "-").concat(String(d.getDate()).padStart(2, "0"));
-      var due = new Date(task.dueDate + "T00:00:00"); // parse as local
+      var due = new Date(task.dueDate + "T00:00:00");
       if (d > due) return 1; // break
       var dn = D7[d.getDay() === 0 ? 6 : d.getDay() - 1];
-      // Only count class hours for classes active on this date
       var activeCls = (schedule[dn] || []).filter(function (c) {
         return !c.repeatsWeekly || (c.repeatUntil ? ds <= c.repeatUntil : true);
       });
@@ -292,12 +293,17 @@ function plan(tasks, schedule, extra, fb, hpd) {
         }).reduce(function (s, b) {
           return s + bh(b);
         }, 0);
-      var av = Math.max(0, (hpd || 10) - cH - eH - fH);
+
+      // Available time minus breaks: for every 1.5h study we need 0.5h break
+      // gross available = hpd - classes - extra - freeblocks
+      // net study available = gross * 0.75 (pomodoro ratio), capped at MAX_STUDY_PER_DAY
+      var grossAv = Math.max(0, (hpd || 10) - cH - eH - fH);
+      var netAv = Math.min(MAX_STUDY_PER_DAY, grossAv * 0.75);
       if (!p[ds]) p[ds] = [];
       var used = p[ds].reduce(function (s, x) {
-          return s + x.hours;
-        }, 0),
-        can = Math.min(rem, Math.max(0, av - used));
+        return s + x.hours;
+      }, 0);
+      var can = Math.min(rem, Math.max(0, netAv - used));
       if (can > 0) {
         p[ds].push({
           taskId: task.id,
@@ -857,7 +863,7 @@ function App() {
     }
   }, "StudyFlow")));
   var weeks = wd();
-  var planned = plan(data.tasks, data.schedule, data.extra, data.freeBlocks, data.hpd);
+  var planned = plan(data.tasks, data.schedule, data.extra, data.freeBlocks, data.hpd, data.maxStudyPerDay || 3);
   var urgent = data.tasks.filter(function (t) {
     return !t.done && t.dueDate && du(t.dueDate) <= 3;
   }).length;
@@ -3676,7 +3682,7 @@ function CfgView(_ref23) {
       color: "#1a1a2e",
       marginBottom: 4
     }
-  }, "\u23F0 Horas activas al d\xEDa"), /*#__PURE__*/React.createElement("div", {
+  }, "\u23F0 Tiempo disponible al d\xEDa"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#888",
@@ -3717,6 +3723,69 @@ function CfgView(_ref23) {
       accentColor: "#4ECDC4"
     }
   })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "white",
+      borderRadius: 14,
+      padding: 14,
+      marginBottom: 12,
+      boxShadow: "0 1px 8px #0000000f"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      fontWeight: 800,
+      color: "#1a1a2e",
+      marginBottom: 4
+    }
+  }, "\uD83D\uDCD6 M\xE1ximo de estudio por d\xEDa"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      marginBottom: 10,
+      lineHeight: 1.5
+    }
+  }, "El planificador distribuye las tareas en varios d\xEDas sin superar este l\xEDmite. Incluye descansos de 30 min por cada 1.5h de estudio (regla 90/30)."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 6
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      color: "#333"
+    }
+  }, "M\xE1ximo diario"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 18,
+      fontWeight: 900,
+      color: "#FF6B6B"
+    }
+  }, data.maxStudyPerDay || 3, "h")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "1",
+    max: "8",
+    step: "0.5",
+    value: data.maxStudyPerDay || 3,
+    onChange: function onChange(e) {
+      return upd(function (d) {
+        return _objectSpread(_objectSpread({}, d), {}, {
+          maxStudyPerDay: +e.target.value
+        });
+      });
+    },
+    style: {
+      width: "100%",
+      accentColor: "#FF6B6B"
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#aaa",
+      marginTop: 6
+    }
+  }, "Con ", data.maxStudyPerDay || 3, "h de estudio \u2192 necesita ", ((data.maxStudyPerDay || 3) / 1.5 * 0.5).toFixed(1), "h de descansos \u2192 ", ((data.maxStudyPerDay || 3) * 1.333).toFixed(1), "h en total")), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "#f8f9fb",
       borderRadius: 14,
