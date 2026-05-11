@@ -84,41 +84,62 @@ var DAY_MAP = {
   "Sábado": "Saturday",
   "Domingo": "Sunday"
 };
-var migrate = function migrate(d) {
-  if (!d) return d;
-  if (d.subjects) d.subjects = d.subjects.map(function (s) {
+var ALL_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+var migrate = function migrate(data) {
+  if (!data) return data;
+  // Translate subjects list
+  if (data.subjects) data.subjects = data.subjects.map(function (s) {
     return SUBJ_MAP[s] || s;
   });
-  if (d.schedule) {
-    var ns = {};
-    Object.keys(d.schedule).forEach(function (k) {
-      var nk = DAY_MAP[k] || k;
-      ns[nk] = (d.schedule[k] || []).map(function (c) {
+  // Translate schedule: rebuild with correct English keys, avoid duplicates
+  if (data.schedule) {
+    var newSched = {};
+    // First pass: copy already-English keys
+    ALL_DAYS.forEach(function (engDay) {
+      if (data.schedule[engDay]) newSched[engDay] = data.schedule[engDay].map(function (c) {
         return _objectSpread(_objectSpread({}, c), {}, {
           subject: SUBJ_MAP[c.subject] || c.subject
         });
       });
     });
-    d.schedule = ns;
+    // Second pass: migrate Spanish keys that don't already exist in English
+    Object.keys(data.schedule).forEach(function (k) {
+      var engKey = DAY_MAP[k];
+      if (engKey && !newSched[engKey] && data.schedule[k]) {
+        newSched[engKey] = data.schedule[k].map(function (c) {
+          return _objectSpread(_objectSpread({}, c), {}, {
+            subject: SUBJ_MAP[c.subject] || c.subject
+          });
+        });
+      }
+    });
+    // Ensure all days exist
+    ALL_DAYS.forEach(function (d) {
+      if (!newSched[d]) newSched[d] = [];
+    });
+    data.schedule = newSched;
   }
-  if (d.tasks) d.tasks = d.tasks.map(function (t) {
+  // Translate task subjects
+  if (data.tasks) data.tasks = data.tasks.map(function (t) {
     return _objectSpread(_objectSpread({}, t), {}, {
       subject: SUBJ_MAP[t.subject] || t.subject
     });
   });
-  if (d.extra) d.extra = d.extra.map(function (e) {
+  // Translate extra day fields
+  if (data.extra) data.extra = data.extra.map(function (e) {
     return _objectSpread(_objectSpread({}, e), {}, {
       day: DAY_MAP[e.day] || e.day
     });
   });
-  if (d.freeBlocks) d.freeBlocks = d.freeBlocks.map(function (b) {
+  // Translate freeBlocks day arrays
+  if (data.freeBlocks) data.freeBlocks = data.freeBlocks.map(function (b) {
     return _objectSpread(_objectSpread({}, b), {}, {
-      days: (b.days || []).map(function (d) {
-        return DAY_MAP[d] || d;
+      days: (b.days || []).map(function (dy) {
+        return DAY_MAP[dy] || dy;
       })
     });
   });
-  return d;
+  return data;
 };
 var load = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
