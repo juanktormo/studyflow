@@ -45,11 +45,6 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -60,10 +55,71 @@ function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present,
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var _React = React,
   useState = _React.useState,
   useEffect = _React.useEffect,
   useCallback = _React.useCallback;
+var SUBJ_MAP = {
+  "Matemáticas": "Mathematics",
+  "Lengua": "Language",
+  "Inglés": "English",
+  "Historia": "History",
+  "Física": "Physics",
+  "Química": "Chemistry",
+  "Biología": "Biology",
+  "Ed. Física": "P.E.",
+  "Tecnología": "Technology"
+};
+var DAY_MAP = {
+  "Lunes": "Monday",
+  "Martes": "Tuesday",
+  "Miércoles": "Wednesday",
+  "Jueves": "Thursday",
+  "Viernes": "Friday",
+  "Sábado": "Saturday",
+  "Domingo": "Sunday"
+};
+var migrate = function migrate(d) {
+  if (!d) return d;
+  if (d.subjects) d.subjects = d.subjects.map(function (s) {
+    return SUBJ_MAP[s] || s;
+  });
+  if (d.schedule) {
+    var ns = {};
+    Object.keys(d.schedule).forEach(function (k) {
+      var nk = DAY_MAP[k] || k;
+      ns[nk] = (d.schedule[k] || []).map(function (c) {
+        return _objectSpread(_objectSpread({}, c), {}, {
+          subject: SUBJ_MAP[c.subject] || c.subject
+        });
+      });
+    });
+    d.schedule = ns;
+  }
+  if (d.tasks) d.tasks = d.tasks.map(function (t) {
+    return _objectSpread(_objectSpread({}, t), {}, {
+      subject: SUBJ_MAP[t.subject] || t.subject
+    });
+  });
+  if (d.extra) d.extra = d.extra.map(function (e) {
+    return _objectSpread(_objectSpread({}, e), {}, {
+      day: DAY_MAP[e.day] || e.day
+    });
+  });
+  if (d.freeBlocks) d.freeBlocks = d.freeBlocks.map(function (b) {
+    return _objectSpread(_objectSpread({}, b), {}, {
+      days: (b.days || []).map(function (d) {
+        return DAY_MAP[d] || d;
+      })
+    });
+  });
+  return d;
+};
 var load = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
     var snap, r, _t, _t2;
@@ -79,7 +135,7 @@ var load = /*#__PURE__*/function () {
             _context.n = 2;
             break;
           }
-          return _context.a(2, snap.data().appData);
+          return _context.a(2, migrate(snap.data().appData));
         case 2:
           _context.n = 4;
           break;
@@ -93,7 +149,7 @@ var load = /*#__PURE__*/function () {
             _context.n = 5;
             break;
           }
-          return _context.a(2, JSON.parse(r));
+          return _context.a(2, migrate(JSON.parse(r)));
         case 5:
           _context.n = 7;
           break;
@@ -4445,7 +4501,7 @@ function MAddClass(_ref26) {
       color: "#888",
       marginTop: 2
     }
-  }, "Todos los ", day, "s del curso")), /*#__PURE__*/React.createElement("div", {
+  }, "Every ", day, " of the school year")), /*#__PURE__*/React.createElement("div", {
     onClick: function onClick() {
       return setF(function (x) {
         return _objectSpread(_objectSpread({}, x), {}, {
@@ -4542,7 +4598,7 @@ function MAddClass(_ref26) {
       color: "#aaa",
       marginTop: 4
     }
-  }, "Solo aparece este ", day, " concreto")), /*#__PURE__*/React.createElement(Lbl, null, "Profesor (opcional)"), /*#__PURE__*/React.createElement(Inp, {
+  }, "Only appears on this specific day")), /*#__PURE__*/React.createElement(Lbl, null, "Profesor (opcional)"), /*#__PURE__*/React.createElement(Inp, {
     placeholder: "Teacher name",
     value: f.teacher,
     onChange: function onChange(e) {
@@ -4552,7 +4608,7 @@ function MAddClass(_ref26) {
         });
       });
     }
-  }), /*#__PURE__*/React.createElement(Lbl, null, "Aula (opcional)"), /*#__PURE__*/React.createElement(Inp, {
+  }), /*#__PURE__*/React.createElement(Lbl, null, "Classroom (optional)"), /*#__PURE__*/React.createElement(Inp, {
     placeholder: "E.g.: 102",
     value: f.room,
     onChange: function onChange(e) {
@@ -5010,7 +5066,7 @@ function MAddBlock(_ref29) {
       }
     }, bt.e, " ", bt.l);
   })), /*#__PURE__*/React.createElement(Lbl, null, "Name *"), /*#__PURE__*/React.createElement(Inp, {
-    placeholder: f.type === "comida" ? "Ej: Comida del cole" : f.type === "ocio" ? "Ej: Videojuegos" : "Name",
+    placeholder: f.type === "comida" ? "E.g.: School lunch" : f.type === "ocio" ? "E.g.: Video games" : "Name",
     value: f.name,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -5019,8 +5075,9 @@ function MAddBlock(_ref29) {
         });
       });
     }
-  }), /*#__PURE__*/React.createElement(Lbl, null, "Start"), /*#__PURE__*/React.createElement(Inp, {
-    type: "time",
+  }), /*#__PURE__*/React.createElement(Lbl, null, "Start time"), /*#__PURE__*/React.createElement(Inp, {
+    placeholder: "e.g. 14:00",
+    inputMode: "numeric",
     value: f.startTime,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -5029,8 +5086,9 @@ function MAddBlock(_ref29) {
         });
       });
     }
-  }), /*#__PURE__*/React.createElement(Lbl, null, "End"), /*#__PURE__*/React.createElement(Inp, {
-    type: "time",
+  }), /*#__PURE__*/React.createElement(Lbl, null, "End time"), /*#__PURE__*/React.createElement(Inp, {
+    placeholder: "e.g. 15:00",
+    inputMode: "numeric",
     value: f.endTime,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -5046,7 +5104,7 @@ function MAddBlock(_ref29) {
       fontWeight: 700,
       marginTop: 6
     }
-  }, "\u23F1 ", h.toFixed(1), "h por d\xEDa"), /*#__PURE__*/React.createElement(Lbl, null, "Days *"), /*#__PURE__*/React.createElement("div", {
+  }, "\u23F1 ", h.toFixed(1), "h per day"), /*#__PURE__*/React.createElement(Lbl, null, "Days *"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 5,
@@ -5061,22 +5119,24 @@ function MAddBlock(_ref29) {
       },
       style: {
         border: "2px solid ".concat(f.days.includes(d) ? bt.c : "#ddd"),
-        background: f.days.includes(d) ? bt.c : "transparent",
-        color: f.days.includes(d) ? "white" : "#aaa",
+        background: f.days.includes(d) ? bt.c : "white",
+        color: f.days.includes(d) ? "white" : "#888",
         borderRadius: 10,
-        padding: "6px 8px",
-        fontSize: 11,
+        padding: "8px 10px",
+        fontSize: 12,
         fontWeight: 700,
-        cursor: "pointer"
+        cursor: "pointer",
+        minWidth: 44,
+        textAlign: "center"
       }
     }, d.slice(0, 3));
   })), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 6,
-      marginTop: 6
+      marginTop: 8
     }
-  }, [["M–F", [].concat(D5)], ["All", [].concat(D7)], ["Weekend", ["Saturday", "Domingo"]], ["None", []]].map(function (_ref32) {
+  }, [["Mon–Fri", [].concat(D5)], ["All week", [].concat(D7)], ["Weekend", ["Saturday", "Sunday"]], ["None", []]].map(function (_ref32) {
     var _ref33 = _slicedToArray(_ref32, 2),
       l = _ref33[0],
       days = _ref33[1];
@@ -5095,8 +5155,9 @@ function MAddBlock(_ref29) {
         background: "#f0f0f0",
         border: "none",
         borderRadius: 8,
-        padding: "4px 8px",
-        cursor: "pointer"
+        padding: "5px 8px",
+        cursor: "pointer",
+        fontWeight: 600
       }
     }, l);
   })), f.days.length > 0 && h > 0 && /*#__PURE__*/React.createElement("div", {
@@ -5112,7 +5173,7 @@ function MAddBlock(_ref29) {
     style: {
       color: bt.c
     }
-  }, (h * f.days.length).toFixed(1), "h/weekana")));
+  }, (h * f.days.length).toFixed(1), "h/week")));
 }
 
 // Date picker with 3 selects — always produces "YYYY-MM-DD" format reliably on mobile
