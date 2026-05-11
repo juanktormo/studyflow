@@ -210,12 +210,10 @@ var INIT = {
   tasks: [],
   subjects: SUBS,
   hpd: 10,
-  maxStudyPerDay: 3,
-  courseDates: {
-    navidad: "2025-12-20",
-    semanaSanta: "2026-04-02",
-    finCurso: "2026-06-19"
-  },
+  studyBlock: 1.5,
+  restBlock: 0.5,
+  holidays: [],
+  finCurso: "2026-06-19",
   studentName: "Carlos"
 };
 var ts = function ts() {
@@ -260,62 +258,90 @@ function wd() {
     return d.toISOString().split("T")[0];
   });
 }
-function plan(tasks, schedule, extra, fb, hpd, maxSpd) {
-  var MAX_STUDY_PER_DAY = maxSpd || 3;
-  var p = {},
-    pend = tasks.filter(function (t) {
-      return !t.done && t.dueDate && t.estimatedHours > 0;
-    }).sort(function (a, b) {
-      return new Date(a.dueDate) - new Date(b.dueDate);
-    });
+function plan(tasks, schedule, extra, fb, hpd, studyBlock, restBlock, holidays) {
+  var sb = studyBlock || 1.5;
+  var rb = restBlock || 0.5;
+  // Pomodoro ratio: net study per gross hour = sb/(sb+rb)
+  var studyRatio = sb / (sb + rb);
+  // Max study per day based on ratio (cap at 6h net)
+  var MAX_PER_DAY = Math.min(6, hpd * studyRatio * 0.6);
+
+  // Build holiday set: set of dateStrings that are holidays
+  var holidaySet = new Set();
+  (holidays || []).forEach(function (h) {
+    if (!h.start || !h.end) return;
+    var d = new Date(h.start + "T00:00:00");
+    var end = new Date(h.end + "T00:00:00");
+    while (d <= end) {
+      holidaySet.add("".concat(d.getFullYear(), "-").concat(String(d.getMonth() + 1).padStart(2, "0"), "-").concat(String(d.getDate()).padStart(2, "0")));
+      d.setDate(d.getDate() + 1);
+    }
+  });
+  var p = {};
+  // Only plan tasks with remaining hours > 0 (accounting for progress)
+  var pend = tasks.filter(function (t) {
+    if (t.done) return false;
+    if (!t.dueDate || !t.estimatedHours) return false;
+    var progress = t.progress || 0;
+    var remaining = t.estimatedHours * (1 - progress / 100);
+    return remaining > 0;
+  }).sort(function (a, b) {
+    return new Date(a.dueDate) - new Date(b.dueDate);
+  });
   var now = new Date();
   var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   pend.forEach(function (task) {
-    var rem = task.estimatedHours,
-      d = new Date(today),
+    var progress = task.progress || 0;
+    var rem = Math.round(task.estimatedHours * (1 - progress / 100) * 10) / 10;
+    var d = new Date(today),
       att = 0;
     var _loop = function _loop() {
-      var ds = "".concat(d.getFullYear(), "-").concat(String(d.getMonth() + 1).padStart(2, "0"), "-").concat(String(d.getDate()).padStart(2, "0"));
-      var due = new Date(task.dueDate + "T00:00:00");
-      if (d > due) return 1; // break
-      var dn = D7[d.getDay() === 0 ? 6 : d.getDay() - 1];
-      var activeCls = (schedule[dn] || []).filter(function (c) {
-        return !c.repeatsWeekly || (c.repeatUntil ? ds <= c.repeatUntil : true);
-      });
-      var cH = activeCls.length * 0.75,
-        eH = extra.filter(function (e) {
-          return e.day === dn;
-        }).reduce(function (s, e) {
-          return s + bh(e);
-        }, 0),
-        fH = (fb || []).filter(function (b) {
-          return b.days && b.days.includes(dn);
-        }).reduce(function (s, b) {
-          return s + bh(b);
-        }, 0);
-
-      // Available time minus breaks: for every 1.5h study we need 0.5h break
-      // gross available = hpd - classes - extra - freeblocks
-      // net study available = gross * 0.75 (pomodoro ratio), capped at MAX_STUDY_PER_DAY
-      var grossAv = Math.max(0, (hpd || 10) - cH - eH - fH);
-      var netAv = Math.min(MAX_STUDY_PER_DAY, grossAv * 0.75);
-      if (!p[ds]) p[ds] = [];
-      var used = p[ds].reduce(function (s, x) {
-        return s + x.hours;
-      }, 0);
-      var can = Math.min(rem, Math.max(0, netAv - used));
-      if (can > 0) {
-        p[ds].push({
-          taskId: task.id,
-          hours: Math.round(can * 10) / 10
+        var ds = "".concat(d.getFullYear(), "-").concat(String(d.getMonth() + 1).padStart(2, "0"), "-").concat(String(d.getDate()).padStart(2, "0"));
+        var due = new Date(task.dueDate + "T00:00:00");
+        if (d > due) return 0; // break
+        // Skip holidays
+        if (holidaySet.has(ds)) {
+          d.setDate(d.getDate() + 1);
+          att++;
+          return 1; // continue
+        }
+        var dn = D7[d.getDay() === 0 ? 6 : d.getDay() - 1];
+        var activeCls = (schedule[dn] || []).filter(function (c) {
+          return !c.repeatsWeekly || (c.repeatUntil ? ds <= c.repeatUntil : true);
         });
-        rem -= can;
-      }
-      d.setDate(d.getDate() + 1);
-      att++;
-    };
+        var cH = activeCls.length * 0.75,
+          eH = extra.filter(function (e) {
+            return e.day === dn;
+          }).reduce(function (s, e) {
+            return s + bh(e);
+          }, 0),
+          fH = (fb || []).filter(function (b) {
+            return b.days && b.days.includes(dn);
+          }).reduce(function (s, b) {
+            return s + bh(b);
+          }, 0);
+        var grossAv = Math.max(0, (hpd || 10) - cH - eH - fH);
+        var netAv = Math.min(MAX_PER_DAY, grossAv * studyRatio);
+        if (!p[ds]) p[ds] = [];
+        var used = p[ds].reduce(function (s, x) {
+          return s + x.hours;
+        }, 0);
+        var can = Math.min(rem, Math.max(0, netAv - used));
+        if (can > 0) {
+          p[ds].push({
+            taskId: task.id,
+            hours: Math.round(can * 10) / 10
+          });
+          rem -= can;
+        }
+        d.setDate(d.getDate() + 1);
+        att++;
+      },
+      _ret;
     while (rem > 0 && att < 60) {
-      if (_loop()) break;
+      _ret = _loop();
+      if (_ret === 0) break;
+      if (_ret === 1) continue;
     }
   });
   return p;
@@ -863,7 +889,7 @@ function App() {
     }
   }, "StudyFlow")));
   var weeks = wd();
-  var planned = plan(data.tasks, data.schedule, data.extra, data.freeBlocks, data.hpd, data.maxStudyPerDay || 3);
+  var planned = plan(data.tasks, data.schedule, data.extra, data.freeBlocks, data.hpd, data.studyBlock, data.restBlock, data.holidays);
   var urgent = data.tasks.filter(function (t) {
     return !t.done && t.dueDate && du(t.dueDate) <= 3;
   }).length;
@@ -1938,6 +1964,10 @@ function TasksView(_ref15) {
     _useState12 = _slicedToArray(_useState11, 2),
     sort = _useState12[0],
     setSort = _useState12[1];
+  var _useState13 = useState(null),
+    _useState14 = _slicedToArray(_useState13, 2),
+    editProg = _useState14[0],
+    setEditProg = _useState14[1];
   var list = _toConsumableArray(data.tasks).filter(function (t) {
     return f === "all" ? true : f === "done" ? t.done : !t.done;
   }).sort(function (a, b) {
@@ -1957,7 +1987,8 @@ function TasksView(_ref15) {
       return _objectSpread(_objectSpread({}, d), {}, {
         tasks: d.tasks.map(function (t) {
           return t.id === id ? _objectSpread(_objectSpread({}, t), {}, {
-            done: !t.done
+            done: !t.done,
+            progress: t.done ? t.progress : 100
           }) : t;
         })
       });
@@ -1968,6 +1999,18 @@ function TasksView(_ref15) {
       return _objectSpread(_objectSpread({}, d), {}, {
         tasks: d.tasks.filter(function (t) {
           return t.id !== id;
+        })
+      });
+    });
+  };
+  var setProg = function setProg(id, pct) {
+    return upd(function (d) {
+      return _objectSpread(_objectSpread({}, d), {}, {
+        tasks: d.tasks.map(function (t) {
+          return t.id === id ? _objectSpread(_objectSpread({}, t), {}, {
+            progress: pct,
+            done: pct >= 100
+          }) : t;
         })
       });
     });
@@ -2068,6 +2111,10 @@ function TasksView(_ref15) {
   }, "\u2705"), "\xA1Sin tareas aqu\xED!"), list.map(function (t) {
     var days = t.dueDate ? du(t.dueDate) : null,
       p = PR[t.priority || "media"];
+    var prog = t.progress || 0;
+    var rem = t.estimatedHours > 0 ? Math.round(t.estimatedHours * (1 - prog / 100) * 10) / 10 : 0;
+    var isEditing = editProg === t.id;
+    var progColor = prog >= 75 ? "#4ECDC4" : prog >= 40 ? "#F7A440" : "#FF6B6B";
     return /*#__PURE__*/React.createElement("div", {
       key: t.id,
       style: {
@@ -2076,11 +2123,14 @@ function TasksView(_ref15) {
         padding: "12px",
         marginBottom: 8,
         boxShadow: "0 1px 6px #0000000d",
-        display: "flex",
-        alignItems: "flex-start",
-        gap: 10,
         borderLeft: "4px solid ".concat(p.c),
         opacity: t.done ? .6 : 1
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 10
       }
     }, /*#__PURE__*/React.createElement("button", {
       style: {
@@ -2088,7 +2138,8 @@ function TasksView(_ref15) {
         border: "none",
         cursor: "pointer",
         padding: 2,
-        flexShrink: 0
+        flexShrink: 0,
+        marginTop: 2
       },
       onClick: function onClick() {
         return toggle(t.id);
@@ -2147,7 +2198,130 @@ function TasksView(_ref15) {
         marginTop: 3,
         fontStyle: "italic"
       }
-    }, t.notes)), /*#__PURE__*/React.createElement("div", {
+    }, t.notes), !t.done && t.estimatedHours > 0 && /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 8
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        justifyContent: "space-between",
+        marginBottom: 3
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: "#888"
+      }
+    }, "Progreso: ", /*#__PURE__*/React.createElement("b", {
+      style: {
+        color: progColor
+      }
+    }, prog, "%")), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: "#aaa"
+      }
+    }, "Quedan ", rem, "h")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        height: 6,
+        background: "#f0f0f0",
+        borderRadius: 6,
+        overflow: "hidden",
+        marginBottom: 6
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        height: "100%",
+        width: "".concat(prog, "%"),
+        background: progColor,
+        borderRadius: 6,
+        transition: "width .3s"
+      }
+    })), /*#__PURE__*/React.createElement("button", {
+      onClick: function onClick() {
+        return setEditProg(isEditing ? null : t.id);
+      },
+      style: {
+        fontSize: 11,
+        color: "#4ECDC4",
+        fontWeight: 700,
+        background: "none",
+        border: "1px solid #4ECDC4",
+        borderRadius: 8,
+        padding: "3px 10px",
+        cursor: "pointer"
+      }
+    }, isEditing ? "▲ Cerrar" : "✏️ Actualizar progreso"), isEditing && /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 8,
+        background: "#f8f9fb",
+        borderRadius: 10,
+        padding: "10px 12px"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        justifyContent: "space-between",
+        marginBottom: 6
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        fontWeight: 700
+      }
+    }, "% completado"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 15,
+        fontWeight: 900,
+        color: progColor
+      }
+    }, prog, "%")), /*#__PURE__*/React.createElement("input", {
+      type: "range",
+      min: "0",
+      max: "100",
+      step: "5",
+      value: prog,
+      onChange: function onChange(e) {
+        return setProg(t.id, +e.target.value);
+      },
+      style: {
+        width: "100%",
+        accentColor: "#4ECDC4",
+        marginBottom: 8
+      }
+    }), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        gap: 5
+      }
+    }, [0, 25, 50, 75, 100].map(function (pct) {
+      return /*#__PURE__*/React.createElement("button", {
+        key: pct,
+        onClick: function onClick() {
+          setProg(t.id, pct);
+          if (pct === 100) setEditProg(null);
+        },
+        style: {
+          flex: 1,
+          border: "1.5px solid ".concat(prog === pct ? "#4ECDC4" : "#ddd"),
+          background: prog === pct ? "#4ECDC4" : "white",
+          color: prog === pct ? "white" : "#666",
+          borderRadius: 8,
+          padding: "5px 0",
+          fontSize: 12,
+          fontWeight: 700,
+          cursor: "pointer"
+        }
+      }, pct, "%");
+    })), prog > 0 && prog < 100 && /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: "#888",
+        marginTop: 6,
+        textAlign: "center"
+      }
+    }, "El planificador ajustar\xE1 las ", rem, "h restantes")))), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         flexDirection: "column",
@@ -2174,7 +2348,7 @@ function TasksView(_ref15) {
       onClick: function onClick() {
         return del(t.id);
       }
-    })));
+    }))));
   }));
 }
 
@@ -2445,22 +2619,22 @@ function CalView(_ref17) {
   var data = _ref17.data,
     planned = _ref17.planned;
   var now = new Date();
-  var _useState13 = useState("month"),
-    _useState14 = _slicedToArray(_useState13, 2),
-    calView = _useState14[0],
-    setCalView = _useState14[1]; // month | week | day
-  var _useState15 = useState(now.getFullYear()),
+  var _useState15 = useState("month"),
     _useState16 = _slicedToArray(_useState15, 2),
-    yr = _useState16[0],
-    setYr = _useState16[1];
-  var _useState17 = useState(now.getMonth()),
+    calView = _useState16[0],
+    setCalView = _useState16[1]; // month | week | day
+  var _useState17 = useState(now.getFullYear()),
     _useState18 = _slicedToArray(_useState17, 2),
-    mo = _useState18[0],
-    setMo = _useState18[1];
-  var _useState19 = useState(ts()),
+    yr = _useState18[0],
+    setYr = _useState18[1];
+  var _useState19 = useState(now.getMonth()),
     _useState20 = _slicedToArray(_useState19, 2),
-    selDate = _useState20[0],
-    setSelDate = _useState20[1];
+    mo = _useState20[0],
+    setMo = _useState20[1];
+  var _useState21 = useState(ts()),
+    _useState22 = _slicedToArray(_useState21, 2),
+    selDate = _useState22[0],
+    setSelDate = _useState22[1];
   var VW = [{
     id: "month",
     l: "Mes"
@@ -3023,10 +3197,10 @@ function WeekGrid(_ref21) {
   var weekDs = getWeekDatesFrom(selDate);
   var totalH = (TIMELINE_END - TIMELINE_START) * HOUR_H;
   // show only L–V (5 days) for school, toggle to all 7
-  var _useState21 = useState(false),
-    _useState22 = _slicedToArray(_useState21, 2),
-    show7 = _useState22[0],
-    setShow7 = _useState22[1];
+  var _useState23 = useState(false),
+    _useState24 = _slicedToArray(_useState23, 2),
+    show7 = _useState24[0],
+    setShow7 = _useState24[1];
   var visDs = show7 ? weekDs : weekDs.slice(0, 5);
   var visDays = show7 ? D7 : D5;
   var colW = "calc((100% - ".concat(TIME_COL_W, "px) / ").concat(visDs.length, ")");
@@ -3505,18 +3679,19 @@ function DayGrid(_ref22) {
 function CfgView(_ref23) {
   var data = _ref23.data,
     upd = _ref23.upd;
-  var cd = data.courseDates || {};
-  var _useState23 = useState(data.studentName || "Carlos"),
-    _useState24 = _slicedToArray(_useState23, 2),
-    name = _useState24[0],
-    setName = _useState24[1];
-  var setDate = function setDate(key, val) {
-    return upd(function (d) {
-      return _objectSpread(_objectSpread({}, d), {}, {
-        courseDates: _objectSpread(_objectSpread({}, d.courseDates || {}), {}, _defineProperty({}, key, val))
-      });
-    });
-  };
+  var _useState25 = useState(data.studentName || "Carlos"),
+    _useState26 = _slicedToArray(_useState25, 2),
+    name = _useState26[0],
+    setName = _useState26[1];
+  var _useState27 = useState({
+      name: "",
+      start: "",
+      end: ""
+    }),
+    _useState28 = _slicedToArray(_useState27, 2),
+    newHol = _useState28[0],
+    setNewHol = _useState28[1];
+  var holidays = data.holidays || [];
   var saveName = function saveName() {
     return upd(function (d) {
       return _objectSpread(_objectSpread({}, d), {}, {
@@ -3525,10 +3700,9 @@ function CfgView(_ref23) {
     });
   };
   var fdLong = function fdLong(ds) {
-    if (!ds) return "No configurada";
+    if (!ds) return "";
     try {
       return new Date(ds + "T00:00:00").toLocaleDateString("es-ES", {
-        weekday: "long",
         day: "numeric",
         month: "long",
         year: "numeric"
@@ -3537,23 +3711,30 @@ function CfgView(_ref23) {
       return ds;
     }
   };
-  var DATES = [{
-    key: "navidad",
-    label: "🎄 Vacaciones de Navidad",
-    desc: "Primer día sin clase en Navidad"
-  }, {
-    key: "semanaSanta",
-    label: "✝️ Vacaciones Semana Santa",
-    desc: "Primer día sin clase en Semana Santa"
-  }, {
-    key: "finCurso",
-    label: "🎓 Fin de curso",
-    desc: "Último día de clase del año"
-  }, {
-    key: "inicioCurso",
-    label: "📚 Inicio de curso",
-    desc: "Primer día de clase (para el próximo año)"
-  }];
+  var addHoliday = function addHoliday() {
+    if (!newHol.name || !newHol.start || !newHol.end) return;
+    upd(function (d) {
+      return _objectSpread(_objectSpread({}, d), {}, {
+        holidays: [].concat(_toConsumableArray(d.holidays || []), [_objectSpread(_objectSpread({}, newHol), {}, {
+          id: Date.now().toString()
+        })])
+      });
+    });
+    setNewHol({
+      name: "",
+      start: "",
+      end: ""
+    });
+  };
+  var delHoliday = function delHoliday(id) {
+    return upd(function (d) {
+      return _objectSpread(_objectSpread({}, d), {}, {
+        holidays: (d.holidays || []).filter(function (h) {
+          return h.id !== id;
+        })
+      });
+    });
+  };
   return /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "14px 14px 0"
@@ -3622,52 +3803,30 @@ function CfgView(_ref23) {
       color: "#1a1a2e",
       marginBottom: 4
     }
-  }, "\uD83D\uDCC5 Fechas del curso escolar"), /*#__PURE__*/React.createElement("div", {
+  }, "\uD83C\uDF93 Fin de curso"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#888",
-      marginBottom: 14,
-      lineHeight: 1.5
+      marginBottom: 8
     }
-  }, "Estas fechas aparecen como accesos r\xE1pidos al a\xF1adir clases con repetici\xF3n semanal."), DATES.map(function (_ref24) {
-    var key = _ref24.key,
-      label = _ref24.label,
-      desc = _ref24.desc;
-    return /*#__PURE__*/React.createElement("div", {
-      key: key,
-      style: {
-        marginBottom: 16,
-        paddingBottom: 16,
-        borderBottom: "1px solid #f5f5f5"
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 13,
-        fontWeight: 800,
-        color: "#1a1a2e",
-        marginBottom: 2
-      }
-    }, label), /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 11,
-        color: "#aaa",
-        marginBottom: 8
-      }
-    }, desc), /*#__PURE__*/React.createElement(DatePick, {
-      label: "",
-      value: cd[key] || "",
-      onChange: function onChange(v) {
-        return setDate(key, v);
-      }
-    }), cd[key] && /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 11,
-        color: "#4ECDC4",
-        fontWeight: 700,
-        marginTop: 4
-      }
-    }, "\u2713 ", fdLong(cd[key])));
-  })), /*#__PURE__*/React.createElement("div", {
+  }, "\xDAltimo d\xEDa de clase \u2014 aparece como acceso r\xE1pido al a\xF1adir clases"), /*#__PURE__*/React.createElement(DatePick, {
+    label: "",
+    value: data.finCurso || "",
+    onChange: function onChange(v) {
+      return upd(function (d) {
+        return _objectSpread(_objectSpread({}, d), {}, {
+          finCurso: v
+        });
+      });
+    }
+  }), data.finCurso && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#4ECDC4",
+      fontWeight: 700,
+      marginTop: 4
+    }
+  }, "\u2713 ", fdLong(data.finCurso))), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "white",
       borderRadius: 14,
@@ -3682,18 +3841,265 @@ function CfgView(_ref23) {
       color: "#1a1a2e",
       marginBottom: 4
     }
-  }, "\u23F0 Tiempo disponible al d\xEDa"), /*#__PURE__*/React.createElement("div", {
+  }, "\uD83C\uDFD6\uFE0F Festivos y vacaciones"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      marginBottom: 12,
+      lineHeight: 1.5
+    }
+  }, "El planificador no asignar\xE1 estudio en estos d\xEDas."), holidays.length === 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#ccc",
+      textAlign: "center",
+      padding: "8px 0",
+      marginBottom: 8
+    }
+  }, "Sin festivos configurados"), holidays.map(function (h) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: h.id,
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "8px 0",
+        borderBottom: "1px solid #f5f5f5"
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 16
+      }
+    }, "\uD83C\uDFD6\uFE0F"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 13,
+        fontWeight: 700,
+        color: "#1a1a2e"
+      }
+    }, h.name), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: "#888"
+      }
+    }, fdLong(h.start), " \u2192 ", fdLong(h.end))), /*#__PURE__*/React.createElement(Btn, {
+      icon: "trash",
+      onClick: function onClick() {
+        return delHoliday(h.id);
+      }
+    }));
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#f8f9fb",
+      borderRadius: 12,
+      padding: "12px",
+      marginTop: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      fontWeight: 800,
+      color: "#555",
+      marginBottom: 8
+    }
+  }, "A\xF1adir festivo"), /*#__PURE__*/React.createElement(Lbl, null, "Nombre"), /*#__PURE__*/React.createElement(Inp, {
+    placeholder: "Ej: Navidad, Semana Santa, Puente...",
+    value: newHol.name,
+    onChange: function onChange(e) {
+      return setNewHol(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          name: e.target.value
+        });
+      });
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 10,
+      marginTop: 4
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement(DatePick, {
+    label: "Inicio",
+    value: newHol.start,
+    onChange: function onChange(v) {
+      return setNewHol(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          start: v
+        });
+      });
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement(DatePick, {
+    label: "Fin",
+    value: newHol.end || newHol.start,
+    onChange: function onChange(v) {
+      return setNewHol(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          end: v
+        });
+      });
+    }
+  }))), newHol.start && newHol.end && newHol.start > newHol.end && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#FF6B6B",
+      fontWeight: 700,
+      marginTop: 4
+    }
+  }, "\u26A0\uFE0F La fecha fin debe ser igual o posterior al inicio"), /*#__PURE__*/React.createElement("button", {
+    onClick: addHoliday,
+    style: {
+      width: "100%",
+      marginTop: 10,
+      background: "#1a1a2e",
+      color: "white",
+      border: "none",
+      borderRadius: 10,
+      padding: "10px",
+      fontSize: 13,
+      fontWeight: 700,
+      cursor: "pointer"
+    }
+  }, "+ A\xF1adir festivo"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "white",
+      borderRadius: 14,
+      padding: 14,
+      marginBottom: 12,
+      boxShadow: "0 1px 8px #0000000f"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      fontWeight: 800,
+      color: "#1a1a2e",
+      marginBottom: 4
+    }
+  }, "\uD83C\uDF45 Bloques de estudio"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#888",
+      marginBottom: 12,
+      lineHeight: 1.5
+    }
+  }, "Define cu\xE1nto estudia Carlos seguido y cu\xE1nto descansa. El planificador lo tiene en cuenta."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 4
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      color: "#333"
+    }
+  }, "\u23F1 Estudio continuo"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 15,
+      fontWeight: 900,
+      color: "#FF6B6B"
+    }
+  }, data.studyBlock || 1.5, "h")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0.5",
+    max: "3",
+    step: "0.5",
+    value: data.studyBlock || 1.5,
+    onChange: function onChange(e) {
+      return upd(function (d) {
+        return _objectSpread(_objectSpread({}, d), {}, {
+          studyBlock: +e.target.value
+        });
+      });
+    },
+    style: {
+      width: "100%",
+      accentColor: "#FF6B6B",
+      marginBottom: 10
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 4
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      color: "#333"
+    }
+  }, "\u2615 Descanso"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 15,
+      fontWeight: 900,
+      color: "#4ECDC4"
+    }
+  }, data.restBlock || 0.5, "h")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0.25",
+    max: "1",
+    step: "0.25",
+    value: data.restBlock || 0.5,
+    onChange: function onChange(e) {
+      return upd(function (d) {
+        return _objectSpread(_objectSpread({}, d), {}, {
+          restBlock: +e.target.value
+        });
+      });
+    },
+    style: {
+      width: "100%",
+      accentColor: "#4ECDC4",
+      marginBottom: 10
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#f8f9fb",
+      borderRadius: 10,
+      padding: "8px 12px",
+      fontSize: 12,
+      color: "#555",
+      lineHeight: 1.6
+    }
+  }, "Ciclo: ", /*#__PURE__*/React.createElement("b", null, data.studyBlock || 1.5, "h"), " estudio \u2192 ", /*#__PURE__*/React.createElement("b", null, data.restBlock || 0.5, "h"), " descanso \xB7 Eficiencia: ", /*#__PURE__*/React.createElement("b", null, Math.round((data.studyBlock || 1.5) / ((data.studyBlock || 1.5) + (data.restBlock || 0.5)) * 100), "%"), " tiempo efectivo")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "white",
+      borderRadius: 14,
+      padding: 14,
+      marginBottom: 12,
+      boxShadow: "0 1px 8px #0000000f"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      fontWeight: 800,
+      color: "#1a1a2e",
+      marginBottom: 4
+    }
+  }, "\u23F0 Horas activas al d\xEDa"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#888",
       marginBottom: 10
     }
-  }, "Cu\xE1ntas horas del d\xEDa tiene disponibles (base para el planificador)"), /*#__PURE__*/React.createElement("div", {
+  }, "Desde que se levanta hasta que se acuesta"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: 6
+      marginBottom: 4
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
@@ -3724,69 +4130,6 @@ function CfgView(_ref23) {
     }
   })), /*#__PURE__*/React.createElement("div", {
     style: {
-      background: "white",
-      borderRadius: 14,
-      padding: 14,
-      marginBottom: 12,
-      boxShadow: "0 1px 8px #0000000f"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 14,
-      fontWeight: 800,
-      color: "#1a1a2e",
-      marginBottom: 4
-    }
-  }, "\uD83D\uDCD6 M\xE1ximo de estudio por d\xEDa"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 12,
-      color: "#888",
-      marginBottom: 10,
-      lineHeight: 1.5
-    }
-  }, "El planificador distribuye las tareas en varios d\xEDas sin superar este l\xEDmite. Incluye descansos de 30 min por cada 1.5h de estudio (regla 90/30)."), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 6
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 13,
-      color: "#333"
-    }
-  }, "M\xE1ximo diario"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 18,
-      fontWeight: 900,
-      color: "#FF6B6B"
-    }
-  }, data.maxStudyPerDay || 3, "h")), /*#__PURE__*/React.createElement("input", {
-    type: "range",
-    min: "1",
-    max: "8",
-    step: "0.5",
-    value: data.maxStudyPerDay || 3,
-    onChange: function onChange(e) {
-      return upd(function (d) {
-        return _objectSpread(_objectSpread({}, d), {}, {
-          maxStudyPerDay: +e.target.value
-        });
-      });
-    },
-    style: {
-      width: "100%",
-      accentColor: "#FF6B6B"
-    }
-  }), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      color: "#aaa",
-      marginTop: 6
-    }
-  }, "Con ", data.maxStudyPerDay || 3, "h de estudio \u2192 necesita ", ((data.maxStudyPerDay || 3) / 1.5 * 0.5).toFixed(1), "h de descansos \u2192 ", ((data.maxStudyPerDay || 3) * 1.333).toFixed(1), "h en total")), /*#__PURE__*/React.createElement("div", {
-    style: {
       background: "#f8f9fb",
       borderRadius: 14,
       padding: 14,
@@ -3799,21 +4142,20 @@ function CfgView(_ref23) {
       color: "#888",
       marginBottom: 6
     }
-  }, "\u2139\uFE0F Sobre StudyFlow"), /*#__PURE__*/React.createElement("div", {
+  }, "\u2139\uFE0F StudyFlow"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#aaa",
       lineHeight: 1.6
     }
-  }, "Los datos se guardan autom\xE1ticamente en la nube de Claude. Para acceder siempre a la misma app con tus datos, guarda este enlace en favoritos del navegador.")));
+  }, "Datos sincronizados en la nube. Accede desde cualquier dispositivo con la misma URL.")));
 }
-
 // ── Modals ────────────────────────────────────────────────────────────────────
-function ModalRouter(_ref25) {
-  var m = _ref25.m,
-    close = _ref25.close,
-    data = _ref25.data,
-    upd = _ref25.upd;
+function ModalRouter(_ref24) {
+  var m = _ref24.m,
+    close = _ref24.close,
+    data = _ref24.data,
+    upd = _ref24.upd;
   if (m.type === "addClass") return /*#__PURE__*/React.createElement(MAddClass, {
     day: m.day,
     data: data,
@@ -3838,10 +4180,10 @@ function ModalRouter(_ref25) {
 }
 
 // Time picker: two selects (hour + minute) - works reliably on all mobile browsers
-function TimePick(_ref26) {
-  var label = _ref26.label,
-    value = _ref26.value,
-    onChange = _ref26.onChange;
+function TimePick(_ref25) {
+  var label = _ref25.label,
+    value = _ref25.value,
+    onChange = _ref25.onChange;
   var _split$map5 = (value || "08:00").split(":").map(Number),
     _split$map6 = _slicedToArray(_split$map5, 2),
     h = _split$map6[0],
@@ -3902,15 +4244,14 @@ function TimePick(_ref26) {
     }, x);
   }))));
 }
-function MAddClass(_ref27) {
-  var day = _ref27.day,
-    data = _ref27.data,
-    upd = _ref27.upd,
-    close = _ref27.close;
-  var cd = data.courseDates || {};
+function MAddClass(_ref26) {
+  var day = _ref26.day,
+    data = _ref26.data,
+    upd = _ref26.upd,
+    close = _ref26.close;
   var now = new Date();
-  var defaultUntil = cd.finCurso || (now.getMonth() < 6 ? "".concat(now.getFullYear(), "-06-20") : "".concat(now.getFullYear() + 1, "-06-20"));
-  var _useState25 = useState({
+  var defaultUntil = data.finCurso || (now.getMonth() < 6 ? "".concat(now.getFullYear(), "-06-20") : "".concat(now.getFullYear() + 1, "-06-20"));
+  var _useState29 = useState({
       subject: data.subjects[0] || "",
       time: "08:00",
       endTime: "09:00",
@@ -3919,13 +4260,13 @@ function MAddClass(_ref27) {
       repeatsWeekly: true,
       repeatUntil: defaultUntil
     }),
-    _useState26 = _slicedToArray(_useState25, 2),
-    f = _useState26[0],
-    setF = _useState26[1];
-  var _useState27 = useState(""),
-    _useState28 = _slicedToArray(_useState27, 2),
-    custom = _useState28[0],
-    setCustom = _useState28[1];
+    _useState30 = _slicedToArray(_useState29, 2),
+    f = _useState30[0],
+    setF = _useState30[1];
+  var _useState31 = useState(""),
+    _useState32 = _slicedToArray(_useState31, 2),
+    custom = _useState32[0],
+    setCustom = _useState32[1];
   var save = function save() {
     var subj = f.subject === "__new__" ? custom : f.subject;
     if (!subj || !f.time) return;
@@ -3964,17 +4305,9 @@ function MAddClass(_ref27) {
       return untilDate;
     }
   }();
-
-  // Presets from courseDates configured in Ajustes
-  var presets = [cd.navidad && {
-    l: "Navidad",
-    v: cd.navidad
-  }, cd.semanaSanta && {
-    l: "Semana Santa",
-    v: cd.semanaSanta
-  }, cd.finCurso && {
+  var presets = [data.finCurso && {
     l: "Fin de curso",
-    v: cd.finCurso
+    v: data.finCurso
   }].filter(Boolean);
   return /*#__PURE__*/React.createElement(ModalWrap, {
     title: "A\xF1adir clase \u2014 ".concat(day),
@@ -4205,20 +4538,20 @@ function MAddClass(_ref27) {
     }
   }));
 }
-function MAddExtra(_ref28) {
-  var data = _ref28.data,
-    upd = _ref28.upd,
-    close = _ref28.close;
-  var _useState29 = useState({
+function MAddExtra(_ref27) {
+  var data = _ref27.data,
+    upd = _ref27.upd,
+    close = _ref27.close;
+  var _useState33 = useState({
       name: "",
       day: "Lunes",
       startTime: "17:00",
       endTime: "18:00",
       color: "#4ECDC4"
     }),
-    _useState30 = _slicedToArray(_useState29, 2),
-    f = _useState30[0],
-    setF = _useState30[1];
+    _useState34 = _slicedToArray(_useState33, 2),
+    f = _useState34[0],
+    setF = _useState34[1];
   var save = function save() {
     if (!f.name) return;
     upd(function (d) {
@@ -4303,19 +4636,19 @@ function MAddExtra(_ref28) {
     });
   })));
 }
-function MAddBlock(_ref29) {
-  var upd = _ref29.upd,
-    close = _ref29.close;
-  var _useState31 = useState({
+function MAddBlock(_ref28) {
+  var upd = _ref28.upd,
+    close = _ref28.close;
+  var _useState35 = useState({
       name: "",
       type: "comida",
       startTime: "14:00",
       endTime: "15:00",
       days: [].concat(D5)
     }),
-    _useState32 = _slicedToArray(_useState31, 2),
-    f = _useState32[0],
-    setF = _useState32[1];
+    _useState36 = _slicedToArray(_useState35, 2),
+    f = _useState36[0],
+    setF = _useState36[1];
   var save = function save() {
     if (!f.name || !f.days.length) return;
     upd(function (d) {
@@ -4349,10 +4682,10 @@ function MAddBlock(_ref29) {
       gap: 6,
       marginTop: 4
     }
-  }, Object.entries(BT).map(function (_ref30) {
-    var _ref31 = _slicedToArray(_ref30, 2),
-      key = _ref31[0],
-      bt = _ref31[1];
+  }, Object.entries(BT).map(function (_ref29) {
+    var _ref30 = _slicedToArray(_ref29, 2),
+      key = _ref30[0],
+      bt = _ref30[1];
     return /*#__PURE__*/React.createElement("button", {
       key: key,
       onClick: function onClick() {
@@ -4440,10 +4773,10 @@ function MAddBlock(_ref29) {
       gap: 6,
       marginTop: 6
     }
-  }, [["L–V", [].concat(D5)], ["Todos", [].concat(D7)], ["Finde", ["Sábado", "Domingo"]], ["Ninguno", []]].map(function (_ref32) {
-    var _ref33 = _slicedToArray(_ref32, 2),
-      l = _ref33[0],
-      days = _ref33[1];
+  }, [["L–V", [].concat(D5)], ["Todos", [].concat(D7)], ["Finde", ["Sábado", "Domingo"]], ["Ninguno", []]].map(function (_ref31) {
+    var _ref32 = _slicedToArray(_ref31, 2),
+      l = _ref32[0],
+      days = _ref32[1];
     return /*#__PURE__*/React.createElement("button", {
       key: l,
       onClick: function onClick() {
@@ -4480,23 +4813,23 @@ function MAddBlock(_ref29) {
 }
 
 // Date picker with 3 selects — always produces "YYYY-MM-DD" format reliably on mobile
-function DatePick(_ref34) {
-  var label = _ref34.label,
-    value = _ref34.value,
-    onChange = _ref34.onChange;
+function DatePick(_ref33) {
+  var label = _ref33.label,
+    value = _ref33.value,
+    onChange = _ref33.onChange;
   var now = new Date();
-  var _useState33 = useState(value ? +value.split("-")[0] : now.getFullYear()),
-    _useState34 = _slicedToArray(_useState33, 2),
-    yr = _useState34[0],
-    setYr = _useState34[1];
-  var _useState35 = useState(value ? +value.split("-")[1] : now.getMonth() + 1),
-    _useState36 = _slicedToArray(_useState35, 2),
-    mo = _useState36[0],
-    setMo = _useState36[1];
-  var _useState37 = useState(value ? +value.split("-")[2] : now.getDate()),
+  var _useState37 = useState(value ? +value.split("-")[0] : now.getFullYear()),
     _useState38 = _slicedToArray(_useState37, 2),
-    dy = _useState38[0],
-    setDy = _useState38[1];
+    yr = _useState38[0],
+    setYr = _useState38[1];
+  var _useState39 = useState(value ? +value.split("-")[1] : now.getMonth() + 1),
+    _useState40 = _slicedToArray(_useState39, 2),
+    mo = _useState40[0],
+    setMo = _useState40[1];
+  var _useState41 = useState(value ? +value.split("-")[2] : now.getDate()),
+    _useState42 = _slicedToArray(_useState41, 2),
+    dy = _useState42[0],
+    setDy = _useState42[1];
   var MONTHS = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
   var daysInMonth = new Date(yr, mo, 0).getDate();
   var years = Array.from({
@@ -4582,13 +4915,13 @@ function DatePick(_ref34) {
     year: "numeric"
   })));
 }
-function MAddTask(_ref35) {
-  var data = _ref35.data,
-    upd = _ref35.upd,
-    close = _ref35.close;
+function MAddTask(_ref34) {
+  var data = _ref34.data,
+    upd = _ref34.upd,
+    close = _ref34.close;
   var now = new Date();
   var initDate = "".concat(now.getFullYear(), "-").concat(String(now.getMonth() + 1).padStart(2, "0"), "-").concat(String(now.getDate()).padStart(2, "0"));
-  var _useState39 = useState({
+  var _useState43 = useState({
       title: "",
       subject: data.subjects[0] || "",
       type: "Examen",
@@ -4597,9 +4930,9 @@ function MAddTask(_ref35) {
       priority: "media",
       notes: ""
     }),
-    _useState40 = _slicedToArray(_useState39, 2),
-    f = _useState40[0],
-    setF = _useState40[1];
+    _useState44 = _slicedToArray(_useState43, 2),
+    f = _useState44[0],
+    setF = _useState44[1];
   var save = function save() {
     if (!f.title || !f.dueDate) return;
     // Normalise date to YYYY-MM-DD just in case
@@ -4704,10 +5037,10 @@ function MAddTask(_ref35) {
       gap: 8,
       marginTop: 4
     }
-  }, Object.entries(PR).map(function (_ref36) {
-    var _ref37 = _slicedToArray(_ref36, 2),
-      k = _ref37[0],
-      v = _ref37[1];
+  }, Object.entries(PR).map(function (_ref35) {
+    var _ref36 = _slicedToArray(_ref35, 2),
+      k = _ref36[0],
+      v = _ref36[1];
     return /*#__PURE__*/React.createElement("button", {
       key: k,
       onClick: function onClick() {
