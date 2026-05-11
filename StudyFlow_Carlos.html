@@ -4219,65 +4219,56 @@ function TimePick(_ref25) {
   var label = _ref25.label,
     value = _ref25.value,
     onChange = _ref25.onChange;
-  var _split$map5 = (value || "08:00").split(":").map(Number),
-    _split$map6 = _slicedToArray(_split$map5, 2),
-    h = _split$map6[0],
-    m = _split$map6[1];
-  var hrs = Array.from({
-    length: 16
-  }, function (_, i) {
-    return i + 7;
-  }); // 07–22
-  var mins = ["00", "15", "30", "45"];
-  var set = function set(newH, newM) {
-    return onChange("".concat(String(newH).padStart(2, "0"), ":").concat(String(newM).padStart(2, "0")));
-  };
-  var sel = {
-    border: "1px solid #eee",
-    borderRadius: 10,
-    padding: "10px 8px",
-    fontSize: 15,
-    background: "#fafafa",
-    outline: "none",
-    fontFamily: "inherit",
-    flex: 1,
-    textAlign: "center"
-  };
-  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Lbl, null, label), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "flex",
-      gap: 6,
-      alignItems: "center"
+  var _useState29 = useState(value || "08:00"),
+    _useState30 = _slicedToArray(_useState29, 2),
+    val = _useState30[0],
+    setVal = _useState30[1];
+  var handle = function handle(v) {
+    setVal(v);
+    // Auto-format: if user types 4 digits like "0850" convert to "08:50"
+    var clean = v.replace(/[^0-9:]/g, "");
+    if (/^\d{4}$/.test(clean)) {
+      var fmt = clean.slice(0, 2) + ":" + clean.slice(2);
+      setVal(fmt);
+      onChange(fmt);
+    } else if (/^\d{1,2}:\d{2}$/.test(clean)) {
+      onChange(clean);
+    } else if (/^\d{1,2}:\d{2}$/.test(v)) {
+      onChange(v);
     }
-  }, /*#__PURE__*/React.createElement("select", {
-    value: h,
+  };
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Lbl, null, label), /*#__PURE__*/React.createElement("input", {
+    value: val,
     onChange: function onChange(e) {
-      return set(+e.target.value, m);
+      return handle(e.target.value);
     },
-    style: sel
-  }, hrs.map(function (x) {
-    return /*#__PURE__*/React.createElement("option", {
-      key: x,
-      value: x
-    }, String(x).padStart(2, "0"));
-  })), /*#__PURE__*/React.createElement("span", {
+    onBlur: function onBlur(e) {
+      // On blur, try to normalize e.g. "9:5" → "09:05"
+      var v = e.target.value.trim();
+      var m = v.match(/^(\d{1,2}):(\d{1,2})$/);
+      if (m) {
+        var fmt = String(m[1]).padStart(2, "0") + ":" + String(m[2]).padStart(2, "0");
+        setVal(fmt);
+        onChange(fmt);
+      }
+    },
+    placeholder: "e.g. 08:50",
+    inputMode: "numeric",
     style: {
+      width: "100%",
+      border: "1px solid #eee",
+      borderRadius: 10,
+      padding: "12px",
       fontSize: 18,
-      fontWeight: 900,
-      color: "#aaa"
+      background: "#fafafa",
+      boxSizing: "border-box",
+      outline: "none",
+      fontFamily: "inherit",
+      textAlign: "center",
+      letterSpacing: 2,
+      fontWeight: 700
     }
-  }, ":"), /*#__PURE__*/React.createElement("select", {
-    value: String(m).padStart(2, "0"),
-    onChange: function onChange(e) {
-      return set(h, +e.target.value);
-    },
-    style: sel
-  }, mins.map(function (x) {
-    return /*#__PURE__*/React.createElement("option", {
-      key: x,
-      value: x
-    }, x);
-  }))));
+  }));
 }
 function MAddClass(_ref26) {
   var day = _ref26.day,
@@ -4286,7 +4277,7 @@ function MAddClass(_ref26) {
     close = _ref26.close;
   var now = new Date();
   var defaultUntil = data.finCurso || (now.getMonth() < 6 ? "".concat(now.getFullYear(), "-06-20") : "".concat(now.getFullYear() + 1, "-06-20"));
-  var _useState29 = useState({
+  var _useState31 = useState({
       subject: data.subjects[0] || "",
       time: "08:00",
       endTime: "09:00",
@@ -4295,13 +4286,13 @@ function MAddClass(_ref26) {
       repeatsWeekly: true,
       repeatUntil: defaultUntil
     }),
-    _useState30 = _slicedToArray(_useState29, 2),
-    f = _useState30[0],
-    setF = _useState30[1];
-  var _useState31 = useState(""),
     _useState32 = _slicedToArray(_useState31, 2),
-    custom = _useState32[0],
-    setCustom = _useState32[1];
+    f = _useState32[0],
+    setF = _useState32[1];
+  var _useState33 = useState(""),
+    _useState34 = _slicedToArray(_useState33, 2),
+    custom = _useState34[0],
+    setCustom = _useState34[1];
   var save = function save() {
     var subj = f.subject === "__new__" ? custom : f.subject;
     if (!subj || !f.time) return;
@@ -4582,7 +4573,7 @@ function MEditClass(_ref27) {
     close = _ref27.close;
   var now = new Date();
   var defaultUntil = data.finCurso || (now.getMonth() < 6 ? "".concat(now.getFullYear(), "-06-20") : "".concat(now.getFullYear() + 1, "-06-20"));
-  var _useState33 = useState({
+  var _useState35 = useState({
       subject: cls.subject || data.subjects[0] || "",
       time: cls.time || "08:00",
       endTime: cls.endTime || "09:00",
@@ -4591,13 +4582,13 @@ function MEditClass(_ref27) {
       repeatsWeekly: cls.repeatsWeekly !== false,
       repeatUntil: cls.repeatUntil || defaultUntil
     }),
-    _useState34 = _slicedToArray(_useState33, 2),
-    f = _useState34[0],
-    setF = _useState34[1];
-  var _useState35 = useState(""),
     _useState36 = _slicedToArray(_useState35, 2),
-    custom = _useState36[0],
-    setCustom = _useState36[1];
+    f = _useState36[0],
+    setF = _useState36[1];
+  var _useState37 = useState(""),
+    _useState38 = _slicedToArray(_useState37, 2),
+    custom = _useState38[0],
+    setCustom = _useState38[1];
   var save = function save() {
     var subj = f.subject === "__new__" ? custom : f.subject;
     if (!subj || !f.time) return;
@@ -4951,16 +4942,16 @@ function MAddExtra(_ref28) {
 function MAddBlock(_ref29) {
   var upd = _ref29.upd,
     close = _ref29.close;
-  var _useState37 = useState({
+  var _useState39 = useState({
       name: "",
       type: "comida",
       startTime: "14:00",
       endTime: "15:00",
       days: [].concat(D5)
     }),
-    _useState38 = _slicedToArray(_useState37, 2),
-    f = _useState38[0],
-    setF = _useState38[1];
+    _useState40 = _slicedToArray(_useState39, 2),
+    f = _useState40[0],
+    setF = _useState40[1];
   var save = function save() {
     if (!f.name || !f.days.length) return;
     upd(function (d) {
@@ -5130,18 +5121,18 @@ function DatePick(_ref34) {
     value = _ref34.value,
     onChange = _ref34.onChange;
   var now = new Date();
-  var _useState39 = useState(value ? +value.split("-")[0] : now.getFullYear()),
-    _useState40 = _slicedToArray(_useState39, 2),
-    yr = _useState40[0],
-    setYr = _useState40[1];
-  var _useState41 = useState(value ? +value.split("-")[1] : now.getMonth() + 1),
+  var _useState41 = useState(value ? +value.split("-")[0] : now.getFullYear()),
     _useState42 = _slicedToArray(_useState41, 2),
-    mo = _useState42[0],
-    setMo = _useState42[1];
-  var _useState43 = useState(value ? +value.split("-")[2] : now.getDate()),
+    yr = _useState42[0],
+    setYr = _useState42[1];
+  var _useState43 = useState(value ? +value.split("-")[1] : now.getMonth() + 1),
     _useState44 = _slicedToArray(_useState43, 2),
-    dy = _useState44[0],
-    setDy = _useState44[1];
+    mo = _useState44[0],
+    setMo = _useState44[1];
+  var _useState45 = useState(value ? +value.split("-")[2] : now.getDate()),
+    _useState46 = _slicedToArray(_useState45, 2),
+    dy = _useState46[0],
+    setDy = _useState46[1];
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var daysInMonth = new Date(yr, mo, 0).getDate();
   var years = Array.from({
@@ -5233,7 +5224,7 @@ function MAddTask(_ref35) {
     close = _ref35.close;
   var now = new Date();
   var initDate = "".concat(now.getFullYear(), "-").concat(String(now.getMonth() + 1).padStart(2, "0"), "-").concat(String(now.getDate()).padStart(2, "0"));
-  var _useState45 = useState({
+  var _useState47 = useState({
       title: "",
       subject: data.subjects[0] || "",
       type: "Examen",
@@ -5242,9 +5233,9 @@ function MAddTask(_ref35) {
       priority: "media",
       notes: ""
     }),
-    _useState46 = _slicedToArray(_useState45, 2),
-    f = _useState46[0],
-    setF = _useState46[1];
+    _useState48 = _slicedToArray(_useState47, 2),
+    f = _useState48[0],
+    setF = _useState48[1];
   var save = function save() {
     if (!f.title || !f.dueDate) return;
     // Normalise date to YYYY-MM-DD just in case
