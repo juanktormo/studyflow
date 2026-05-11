@@ -2501,6 +2501,23 @@ function PlanView(_ref16) {
     weeks = _ref16.weeks,
     upd = _ref16.upd;
   var today = ts();
+
+  // Detect tasks that had planned hours in past days but still have progress < 100%
+  // These are tasks where the planner has had to reschedule
+  var rescheduled = data.tasks.filter(function (t) {
+    if (t.done || !t.dueDate || !t.estimatedHours) return false;
+    var progress = t.progress || 0;
+    var remaining = t.estimatedHours * (1 - progress / 100);
+    if (remaining <= 0) return false;
+    // Check if this task was supposed to have hours in past days
+    var due = new Date(t.dueDate + "T00:00:00");
+    var todayDate = new Date(today + "T00:00:00");
+    // Task is overdue or has past days where it was planned but not done
+    if (due < todayDate) return true; // overdue
+    // Check if total remaining hours can still fit before due date
+    var daysLeft = Math.round((due - todayDate) / 86400000);
+    return daysLeft < remaining; // not enough days left
+  });
   return /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "14px 14px 0"
@@ -2512,7 +2529,77 @@ function PlanView(_ref16) {
       color: "#1a1a2e",
       marginBottom: 12
     }
-  }, "Planner"), /*#__PURE__*/React.createElement("div", {
+  }, "Planner"), rescheduled.length > 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#fff8ee",
+      border: "1px solid #F7A440",
+      borderRadius: 14,
+      padding: "12px 14px",
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 800,
+      color: "#c47a00",
+      marginBottom: 6
+    }
+  }, "\u26A0\uFE0F ", rescheduled.length, " task", rescheduled.length > 1 ? "s" : "", " rescheduled"), rescheduled.map(function (t) {
+    var progress = t.progress || 0;
+    var remaining = Math.round(t.estimatedHours * (1 - progress / 100) * 10) / 10;
+    var due = new Date(t.dueDate + "T00:00:00");
+    var todayDate = new Date(today + "T00:00:00");
+    var daysLeft = Math.round((due - todayDate) / 86400000);
+    return /*#__PURE__*/React.createElement("div", {
+      key: t.id,
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "5px 0",
+        borderTop: "1px solid #ffe0b0"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 12,
+        fontWeight: 700,
+        color: "#333"
+      }
+    }, t.title), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 11,
+        color: "#888"
+      }
+    }, remaining, "h remaining \xB7 ", daysLeft < 0 ? "Overdue" : daysLeft === 0 ? "Due today" : "".concat(daysLeft, "d left"))), daysLeft < 0 ? /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        fontWeight: 800,
+        color: "#FF6B6B",
+        background: "#fff0f0",
+        borderRadius: 8,
+        padding: "2px 8px"
+      }
+    }, "OVERDUE") : /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 11,
+        fontWeight: 800,
+        color: "#F7A440",
+        background: "#fff8ee",
+        borderRadius: 8,
+        padding: "2px 8px"
+      }
+    }, "AT RISK"));
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#888",
+      marginTop: 8
+    }
+  }, "\uD83D\uDCA1 Update progress in Tasks tab so the planner can recalculate accurately")), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "white",
       borderRadius: 14,
@@ -2527,7 +2614,7 @@ function PlanView(_ref16) {
       lineHeight: 1.6,
       marginBottom: 10
     }
-  }, "\uD83D\uDCCA Distribuye el estudio respetando classs, extraescolares, comidas y ocio."), /*#__PURE__*/React.createElement("div", {
+  }, "\uD83D\uDCCA Distributes study time respecting classes, extracurriculars, meals and leisure. Automatically recalculates every day."), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       justifyContent: "space-between",
@@ -2566,7 +2653,7 @@ function PlanView(_ref16) {
       color: "#aaa",
       marginTop: 4
     }
-  }, "Desde que te levantas hasta que te acuestas")), weeks.map(function (date, i) {
+  }, "From when you wake up to when you sleep")), weeks.map(function (date, i) {
     var slots = planned[date] || [],
       isToday = date === today,
       isPast = date < today,
@@ -5598,7 +5685,10 @@ function MAddTask(_ref41) {
     voiceErr = _useState54[0],
     setVoiceErr = _useState54[1];
   var save = function save() {
-    if (!f.title || !f.dueDate) return;
+    if (!f.title || !f.dueDate) {
+      setVoiceErr(!f.title ? "Please enter a title" : "Please select a due date");
+      return;
+    }
     var parts = f.dueDate.split("-");
     var safeDate = "".concat(parts[0], "-").concat(String(parts[1]).padStart(2, "0"), "-").concat(String(parts[2]).padStart(2, "0"));
     upd(function (d) {
@@ -5606,7 +5696,8 @@ function MAddTask(_ref41) {
         tasks: [].concat(_toConsumableArray(d.tasks), [_objectSpread(_objectSpread({}, f), {}, {
           dueDate: safeDate,
           id: Date.now().toString(),
-          done: false
+          done: false,
+          progress: 0
         })])
       });
     });
@@ -5615,14 +5706,13 @@ function MAddTask(_ref41) {
   var startVoice = function startVoice() {
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
-      setVoiceErr("Voice input not supported in this browser");
+      setVoiceErr("Voice input not supported in this browser. Try Chrome on Android.");
       return;
     }
     setVoiceErr("");
     var rec = new SR();
     rec.lang = "en-GB";
     rec.interimResults = false;
-    rec.maxAlternatives = 1;
     rec.onstart = function () {
       return setListening(true);
     };
@@ -5631,13 +5721,13 @@ function MAddTask(_ref41) {
     };
     rec.onerror = function (e) {
       setListening(false);
-      setVoiceErr("Error: ".concat(e.error, ". Try again."));
+      setVoiceErr("Mic error: ".concat(e.error, ". Check microphone permissions."));
     };
     rec.onresult = function (e) {
-      var transcript = e.results[0][0].transcript;
-      setF(function (x) {
-        return _objectSpread(_objectSpread({}, x), {}, {
-          title: x.title ? x.title + " " + transcript : transcript
+      var text = e.results[0][0].transcript;
+      setF(function (prev) {
+        return _objectSpread(_objectSpread({}, prev), {}, {
+          title: prev.title ? prev.title + " " + text : text
         });
       });
     };
@@ -5647,48 +5737,31 @@ function MAddTask(_ref41) {
     title: "New task / exam",
     close: close,
     save: save
-  }, /*#__PURE__*/React.createElement(Lbl, null, "Title *"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     style: {
+      background: "#f8f9fb",
+      borderRadius: 14,
+      padding: "12px 14px",
+      marginBottom: 12,
       display: "flex",
-      gap: 8,
-      alignItems: "center"
+      alignItems: "center",
+      gap: 12
     }
-  }, /*#__PURE__*/React.createElement("input", {
-    style: {
-      flex: 1,
-      border: "1px solid #eee",
-      borderRadius: 10,
-      padding: "10px 12px",
-      fontSize: 14,
-      background: "#fafafa",
-      outline: "none",
-      fontFamily: "inherit"
-    },
-    placeholder: "E.g.: Maths Exam Topic 5",
-    value: f.title,
-    onChange: function onChange(e) {
-      return setF(function (x) {
-        return _objectSpread(_objectSpread({}, x), {}, {
-          title: e.target.value
-        });
-      });
-    }
-  }), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: startVoice,
-    title: "Speak to fill title",
+    disabled: listening,
     style: {
-      width: 46,
-      height: 46,
-      borderRadius: 12,
+      width: 52,
+      height: 52,
+      borderRadius: "50%",
       border: "none",
+      cursor: listening ? "default" : "pointer",
       flexShrink: 0,
-      cursor: "pointer",
       background: listening ? "#FF6B6B" : "#1a1a2e",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      boxShadow: listening ? "0 0 0 4px rgba(255,107,107,0.3)" : "none",
-      transition: "all .2s"
+      boxShadow: listening ? "0 0 0 6px rgba(255,107,107,0.25)" : "0 4px 12px rgba(0,0,0,0.2)"
     }
   }, /*#__PURE__*/React.createElement("svg", {
     width: "22",
@@ -5716,43 +5789,45 @@ function MAddTask(_ref41) {
     y1: "22",
     x2: "16",
     y2: "22"
-  })))), listening && /*#__PURE__*/React.createElement("div", {
+  }))), /*#__PURE__*/React.createElement("div", null, listening ? /*#__PURE__*/React.createElement("div", {
     style: {
-      display: "flex",
-      alignItems: "center",
-      gap: 8,
-      marginTop: 8,
-      background: "#fff0f0",
-      borderRadius: 10,
-      padding: "8px 12px"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: 10,
-      height: 10,
-      borderRadius: "50%",
-      background: "#FF6B6B",
-      animation: "pulse 1s infinite"
-    }
-  }), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 12,
+      fontSize: 13,
       color: "#FF6B6B",
       fontWeight: 700
     }
-  }, "Listening... speak now")), voiceErr && /*#__PURE__*/React.createElement("div", {
+  }, "\uD83D\uDD34 Listening... speak the title") : /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 700,
+      color: "#333"
+    }
+  }, "\uD83C\uDFA4 Tap to speak the title"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#aaa",
+      marginTop: 2
+    }
+  }, "Or type it below"))), /*#__PURE__*/React.createElement(Lbl, null, "Title *"), /*#__PURE__*/React.createElement(Inp, {
+    placeholder: "E.g.: Maths Exam Topic 5",
+    value: f.title,
+    onChange: function onChange(e) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          title: e.target.value
+        });
+      });
+    }
+  }), voiceErr && /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "#FF6B6B",
-      marginTop: 6
+      fontWeight: 600,
+      marginTop: 6,
+      background: "#fff0f0",
+      borderRadius: 8,
+      padding: "6px 10px"
     }
-  }, voiceErr), !listening && !voiceErr && /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      color: "#bbb",
-      marginTop: 4
-    }
-  }, "\uD83C\uDFA4 Tap the mic and speak the task title"), /*#__PURE__*/React.createElement(Lbl, null, "Subject"), /*#__PURE__*/React.createElement(Sel, {
+  }, voiceErr), /*#__PURE__*/React.createElement(Lbl, null, "Subject"), /*#__PURE__*/React.createElement(Sel, {
     value: f.subject,
     onChange: function onChange(e) {
       return setF(function (x) {
