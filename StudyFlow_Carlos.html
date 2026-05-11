@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
@@ -133,10 +133,10 @@ var persist = /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }();
-var D5 = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
-var D7 = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
-var DS = ["L", "M", "X", "J", "V"];
-var DA = ["L", "M", "X", "J", "V", "S", "D"];
+var D5 = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+var D7 = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+var DS = ["M", "T", "W", "T", "F"];
+var DA = ["M", "T", "W", "T", "F", "S", "S"];
 var CL = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9", "#F0B27A", "#82E0AA"];
 var PR = {
   alta: {
@@ -158,43 +158,43 @@ var PR = {
 var BT = {
   comida: {
     e: "🍽️",
-    l: "Comida",
+    l: "Meal",
     c: "#F7A440",
     b: "#fff8ee"
   },
   ocio: {
     e: "🎮",
-    l: "Ocio",
+    l: "Leisure",
     c: "#BB8FCE",
     b: "#f8f0ff"
   },
   deporte: {
     e: "⚽",
-    l: "Deporte",
+    l: "Sport",
     c: "#4ECDC4",
     b: "#f0fffe"
   },
   siesta: {
     e: "😴",
-    l: "Descanso",
+    l: "Rest",
     c: "#85C1E9",
     b: "#f0f8ff"
   },
   familia: {
     e: "👨‍👩‍👧",
-    l: "Familia",
+    l: "Family",
     c: "#82E0AA",
     b: "#f0fff5"
   },
   otro: {
     e: "📌",
-    l: "Otro",
+    l: "Other",
     c: "#aaa",
     b: "#f5f5f5"
   }
 };
-var TYPS = ["Examen", "Trabajo", "Ejercicios", "Lectura", "Proyecto", "Otro"];
-var SUBS = ["Matemáticas", "Lengua", "Inglés", "Historia", "Física", "Química", "Biología", "Ed. Física", "Tecnología"];
+var TYPS = ["Exam", "Assignment", "Exercises", "Reading", "Project", "Other"];
+var SUBS = ["Mathematics", "Language", "English", "History", "Physics", "Chemistry", "Biology", "P.E.", "Technology"];
 var INIT = {
   schedule: {
     Lunes: [],
@@ -228,7 +228,7 @@ var du = function du(ds) {
   return Math.round((d - t) / 86400000);
 };
 var fd = function fd(ds) {
-  return ds ? new Date(ds).toLocaleDateString("es-ES", {
+  return ds ? new Date(ds).toLocaleDateString("en-GB", {
     day: "numeric",
     month: "short"
   }) : "";
@@ -895,31 +895,31 @@ function App() {
   }).length;
   var TABS = [{
     id: "home",
-    l: "Inicio",
+    l: "Home",
     i: "home"
   }, {
     id: "sched",
-    l: "Horario",
+    l: "Schedule",
     i: "grid"
   }, {
     id: "tasks",
-    l: "Tareas",
+    l: "Tasks",
     i: "check"
   }, {
     id: "life",
-    l: "Vida",
+    l: "Life",
     i: "heart"
   }, {
     id: "plan",
-    l: "Planif.",
+    l: "Planner",
     i: "clock"
   }, {
     id: "cal",
-    l: "Mes",
+    l: "Month",
     i: "cal"
   }, {
     id: "cfg",
-    l: "Ajustes",
+    l: "Settings",
     i: "cfg"
   }];
   return /*#__PURE__*/React.createElement("div", {
@@ -1144,13 +1144,13 @@ function HomeView(_ref10) {
       fontWeight: 900,
       color: "#1a1a2e"
     }
-  }, "\xA1Hola, ", data.studentName || "Carlos", "!"), /*#__PURE__*/React.createElement("div", {
+  }, "Hello, ", data.studentName || "Carlos", "!"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 13,
       color: "#888",
       textTransform: "capitalize"
     }
-  }, new Date().toLocaleDateString("es-ES", {
+  }, new Date().toLocaleDateString("en-GB", {
     weekday: "long",
     day: "numeric",
     month: "long"
@@ -1162,17 +1162,17 @@ function HomeView(_ref10) {
     }
   }, [{
     n: pend,
-    l: "Pendientes",
+    l: "Pending",
     g: "tasks"
   }, {
     n: hrs + "h",
-    l: "Horas total",
+    l: "Total hours",
     g: "tasks"
   }, {
     n: (slots.reduce(function (s, p) {
       return s + p.hours;
     }, 0) || 0) + "h",
-    l: "Hoy estudio",
+    l: "Study today",
     g: "plan"
   }].map(function (x, i) {
     return /*#__PURE__*/React.createElement("div", {
@@ -1204,12 +1204,12 @@ function HomeView(_ref10) {
       }
     }, x.l));
   })), /*#__PURE__*/React.createElement(Card, {
-    title: "Hoy \u2014 ".concat(dn),
+    title: "Today \u2014 ".concat(dn),
     action: function action() {
       return go("sched");
     }
   }, events.length === 0 ? /*#__PURE__*/React.createElement(Empty, {
-    t: "Sin actividades hoy \uD83C\uDF89"
+    t: "No activities today \uD83C\uDF89"
   }) : events.map(function (ev, i) {
     return /*#__PURE__*/React.createElement("div", {
       key: i,
@@ -1243,7 +1243,7 @@ function HomeView(_ref10) {
       }
     }, ev.emoji ? ev.emoji + " " : "", ev.label));
   })), fb.length > 0 && /*#__PURE__*/React.createElement(Card, {
-    title: "Tiempo libre hoy",
+    title: "Free time today",
     action: function action() {
       return go("life");
     }
@@ -1282,7 +1282,7 @@ function HomeView(_ref10) {
       c: bt.c
     }, bt.l));
   })), slots.length > 0 && /*#__PURE__*/React.createElement(Card, {
-    title: "Plan de estudio hoy",
+    title: "Study plan today",
     action: function action() {
       return go("plan");
     }
@@ -1326,12 +1326,12 @@ function HomeView(_ref10) {
       }
     }, t.subject, "\xB7", t.type)));
   })), /*#__PURE__*/React.createElement(Card, {
-    title: "Pr\xF3ximas entregas",
+    title: "Upcoming deadlines",
     action: function action() {
       return go("tasks");
     }
   }, upcoming.length === 0 ? /*#__PURE__*/React.createElement(Empty, {
-    t: "Sin entregas pr\xF3ximas \u2705"
+    t: "No upcoming deadlines \u2705"
   }) : upcoming.map(function (t) {
     var d = du(t.dueDate);
     return /*#__PURE__*/React.createElement("div", {
@@ -1370,7 +1370,7 @@ function HomeView(_ref10) {
         color: "white",
         background: d <= 0 ? "#FF6B6B" : d <= 3 ? "#F7A440" : "#4ECDC4"
       }
-    }, d === 0 ? "HOY" : d < 0 ? "Vencida" : "".concat(d, "d")));
+    }, d === 0 ? "TODAY" : d < 0 ? "Overdue" : "".concat(d, "d")));
   })));
 }
 
@@ -1460,7 +1460,7 @@ function SchedView(_ref11) {
       }
     }, d.slice(0, 3)));
   })), /*#__PURE__*/React.createElement(SubCard, {
-    title: "Clases",
+    title: "Classes",
     onAdd: function onAdd() {
       return setModal({
         type: "addClass",
@@ -1468,7 +1468,7 @@ function SchedView(_ref11) {
       });
     }
   }, cls.length === 0 ? /*#__PURE__*/React.createElement(Empty, {
-    t: "Sin clases \xB7 toca + para a\xF1adir"
+    t: "No classes \xB7 tap + to add"
   }) : _toConsumableArray(cls).sort(function (a, b) {
     return a.time.localeCompare(b.time);
   }).map(function (c, i) {
@@ -1510,7 +1510,7 @@ function SchedView(_ref11) {
         color: c.repeatsWeekly ? "#4ECDC4" : "#bbb",
         fontWeight: 600
       }
-    }, c.repeatsWeekly ? "\uD83D\uDD01 Semanal hasta ".concat(c.repeatUntil ? new Date(c.repeatUntil + "T00:00:00").toLocaleDateString("es-ES", {
+    }, c.repeatsWeekly ? "\uD83D\uDD01 Semanal hasta ".concat(c.repeatUntil ? new Date(c.repeatUntil + "T00:00:00").toLocaleDateString("en-GB", {
       day: "numeric",
       month: "short"
     }) : "fin de curso") : "📌 Solo este día")), /*#__PURE__*/React.createElement(Btn, {
@@ -1526,14 +1526,14 @@ function SchedView(_ref11) {
       }
     }));
   })), /*#__PURE__*/React.createElement(SubCard, {
-    title: "Extraescolares",
+    title: "Extracurriculars",
     onAdd: function onAdd() {
       return setModal({
         type: "addExtra"
       });
     }
   }, ext.length === 0 ? /*#__PURE__*/React.createElement(Empty, {
-    t: "Sin extraescolares este d\xEDa"
+    t: "No extracurriculars today"
   }) : ext.map(function (e, i) {
     return /*#__PURE__*/React.createElement("div", {
       key: i,
@@ -1579,7 +1579,7 @@ function SchedView(_ref11) {
       }
     }));
   })), fb.length > 0 && /*#__PURE__*/React.createElement(SubCard, {
-    title: "Comidas & Ocio (hoy)"
+    title: "Meals & Leisure (today)"
   }, fb.map(function (b, i) {
     var bt = BT[b.type] || BT.otro;
     return /*#__PURE__*/React.createElement("div", {
@@ -1734,7 +1734,7 @@ function LifeView(_ref12) {
       color: "#7a6a9a",
       lineHeight: 1.5
     }
-  }, "Total bloqueado: ", /*#__PURE__*/React.createElement("b", null, total.toFixed(1), "h/semana"))), blocks.length === 0 && /*#__PURE__*/React.createElement("div", {
+  }, "Total blocked: ", /*#__PURE__*/React.createElement("b", null, total.toFixed(1), "h/weekana"))), blocks.length === 0 && /*#__PURE__*/React.createElement("div", {
     style: {
       textAlign: "center",
       padding: "24px 0 12px",
@@ -1879,7 +1879,7 @@ function LifeView(_ref12) {
         fontWeight: 800,
         color: bt.c
       }
-    }, t.toFixed(1), "h/sem"));
+    }, t.toFixed(1), "h/week"));
   }), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
@@ -1899,7 +1899,7 @@ function LifeView(_ref12) {
       fontWeight: 900,
       color: "#FF6B6B"
     }
-  }, total.toFixed(1), "h/sem"))), /*#__PURE__*/React.createElement("div", {
+  }, total.toFixed(1), "h/week"))), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "#f8f9fb",
       borderRadius: 14,
@@ -2078,7 +2078,7 @@ function TasksView(_ref15) {
         cursor: "pointer",
         color: f === x ? "white" : "#666"
       }
-    }, x === "pending" ? "Pendientes" : x === "done" ? "Hechas" : "Todas");
+    }, x === "pending" ? "Pending" : x === "done" ? "Done" : "All");
   }), /*#__PURE__*/React.createElement("select", {
     value: sort,
     onChange: function onChange(e) {
@@ -2213,7 +2213,7 @@ function TasksView(_ref15) {
         fontSize: 11,
         color: "#888"
       }
-    }, "Progreso: ", /*#__PURE__*/React.createElement("b", {
+    }, "Progress: ", /*#__PURE__*/React.createElement("b", {
       style: {
         color: progColor
       }
@@ -2222,7 +2222,7 @@ function TasksView(_ref15) {
         fontSize: 11,
         color: "#aaa"
       }
-    }, "Quedan ", rem, "h")), /*#__PURE__*/React.createElement("div", {
+    }, "Remaining ", rem, "h")), /*#__PURE__*/React.createElement("div", {
       style: {
         height: 6,
         background: "#f0f0f0",
@@ -2252,7 +2252,7 @@ function TasksView(_ref15) {
         padding: "3px 10px",
         cursor: "pointer"
       }
-    }, isEditing ? "▲ Cerrar" : "✏️ Actualizar progreso"), isEditing && /*#__PURE__*/React.createElement("div", {
+    }, isEditing ? "▲ Close" : "✏️ Update progress"), isEditing && /*#__PURE__*/React.createElement("div", {
       style: {
         marginTop: 8,
         background: "#f8f9fb",
@@ -2321,7 +2321,7 @@ function TasksView(_ref15) {
         marginTop: 6,
         textAlign: "center"
       }
-    }, "El planificador ajustar\xE1 las ", rem, "h restantes")))), /*#__PURE__*/React.createElement("div", {
+    }, "El planificador ajustar\xE1 las ", rem, "h remaining")))), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         flexDirection: "column",
@@ -2338,7 +2338,7 @@ function TasksView(_ref15) {
         background: days <= 0 ? "#FF6B6B" : days <= 3 ? "#F7A440" : days <= 7 ? "#FFF3CD" : "#eee",
         color: days <= 3 ? "white" : "#555"
       }
-    }, days === 0 ? "HOY" : days < 0 ? "Vencida" : "".concat(days, "d")), t.dueDate && /*#__PURE__*/React.createElement("div", {
+    }, days === 0 ? "TODAY" : days < 0 ? "Overdue" : "".concat(days, "d")), t.dueDate && /*#__PURE__*/React.createElement("div", {
       style: {
         fontSize: 10,
         color: "#bbb"
@@ -2564,7 +2564,7 @@ function PlanView(_ref16) {
         textAlign: "center",
         padding: "4px 0"
       }
-    }, isPast ? "Día pasado" : "Sin estudio asignado") : slots.map(function (sl, j) {
+    }, isPast ? "Past day" : "No study assigned") : slots.map(function (sl, j) {
       var t = data.tasks.find(function (x) {
         return x.id === sl.taskId;
       });
@@ -2643,7 +2643,7 @@ function CalView(_ref17) {
     l: "Semana"
   }, {
     id: "day",
-    l: "Día"
+    l: "Day"
   }];
 
   // navigate prev/next depending on view
@@ -2690,7 +2690,7 @@ function CalView(_ref17) {
 
   // header label
   var hdrLabel = function hdrLabel() {
-    if (calView === "month") return new Date(yr, mo).toLocaleDateString("es-ES", {
+    if (calView === "month") return new Date(yr, mo).toLocaleDateString("en-GB", {
       month: "long",
       year: "numeric"
     });
@@ -2701,12 +2701,12 @@ function CalView(_ref17) {
       mon.setDate(d.getDate() - (dow === 0 ? 6 : dow - 1));
       var sun = new Date(mon);
       sun.setDate(mon.getDate() + 6);
-      return "".concat(mon.getDate(), " \u2013 ").concat(sun.getDate(), " ").concat(sun.toLocaleDateString("es-ES", {
+      return "".concat(mon.getDate(), " \u2013 ").concat(sun.getDate(), " ").concat(sun.toLocaleDateString("en-GB", {
         month: "short",
         year: "numeric"
       }));
     }
-    return new Date(selDate).toLocaleDateString("es-ES", {
+    return new Date(selDate).toLocaleDateString("en-GB", {
       weekday: "long",
       day: "numeric",
       month: "long"
@@ -3230,7 +3230,7 @@ function WeekGrid(_ref21) {
       padding: "3px 10px",
       cursor: "pointer"
     }
-  }, show7 ? "Solo L–V" : "+ Finde")), /*#__PURE__*/React.createElement("div", {
+  }, show7 ? "Mon–Fri only" : "+ Weekend")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       marginBottom: 4
@@ -3355,7 +3355,7 @@ function WeekGrid(_ref21) {
         marginBottom: 6,
         textTransform: "capitalize"
       }
-    }, new Date(date).toLocaleDateString("es-ES", {
+    }, new Date(date).toLocaleDateString("en-GB", {
       weekday: "short",
       day: "numeric"
     })), tasks.map(function (t, j) {
@@ -3460,7 +3460,7 @@ function DayGrid(_ref22) {
       textTransform: "uppercase",
       fontWeight: 700
     }
-  }, new Date(selDate).toLocaleDateString("es-ES", {
+  }, new Date(selDate).toLocaleDateString("en-GB", {
     month: "short"
   }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -3469,7 +3469,7 @@ function DayGrid(_ref22) {
       color: isT ? "white" : "#1a1a2e",
       textTransform: "capitalize"
     }
-  }, new Date(selDate).toLocaleDateString("es-ES", {
+  }, new Date(selDate).toLocaleDateString("en-GB", {
     weekday: "long"
   })), isT && /*#__PURE__*/React.createElement("div", {
     style: {
@@ -3702,7 +3702,7 @@ function CfgView(_ref23) {
   var fdLong = function fdLong(ds) {
     if (!ds) return "";
     try {
-      return new Date(ds + "T00:00:00").toLocaleDateString("es-ES", {
+      return new Date(ds + "T00:00:00").toLocaleDateString("en-GB", {
         day: "numeric",
         month: "long",
         year: "numeric"
@@ -3767,7 +3767,7 @@ function CfgView(_ref23) {
       gap: 8
     }
   }, /*#__PURE__*/React.createElement(Inp, {
-    placeholder: "Nombre",
+    placeholder: "Name",
     value: name,
     onChange: function onChange(e) {
       return setName(e.target.value);
@@ -3906,7 +3906,7 @@ function CfgView(_ref23) {
       marginBottom: 8
     }
   }, "A\xF1adir festivo"), /*#__PURE__*/React.createElement(Lbl, null, "Nombre"), /*#__PURE__*/React.createElement(Inp, {
-    placeholder: "Ej: Navidad, Semana Santa, Puente...",
+    placeholder: "E.g.: Christmas, Easter, Bank holiday...",
     value: newHol.name,
     onChange: function onChange(e) {
       return setNewHol(function (x) {
@@ -3926,7 +3926,7 @@ function CfgView(_ref23) {
       flex: 1
     }
   }, /*#__PURE__*/React.createElement(DatePick, {
-    label: "Inicio",
+    label: "Start",
     value: newHol.start,
     onChange: function onChange(v) {
       return setNewHol(function (x) {
@@ -3940,7 +3940,7 @@ function CfgView(_ref23) {
       flex: 1
     }
   }, /*#__PURE__*/React.createElement(DatePick, {
-    label: "Fin",
+    label: "End",
     value: newHol.end || newHol.start,
     onChange: function onChange(v) {
       return setNewHol(function (x) {
@@ -4073,7 +4073,7 @@ function CfgView(_ref23) {
       color: "#555",
       lineHeight: 1.6
     }
-  }, "Ciclo: ", /*#__PURE__*/React.createElement("b", null, data.studyBlock || 1.5, "h"), " estudio \u2192 ", /*#__PURE__*/React.createElement("b", null, data.restBlock || 0.5, "h"), " descanso \xB7 Eficiencia: ", /*#__PURE__*/React.createElement("b", null, Math.round((data.studyBlock || 1.5) / ((data.studyBlock || 1.5) + (data.restBlock || 0.5)) * 100), "%"), " tiempo efectivo")), /*#__PURE__*/React.createElement("div", {
+  }, "Cycle: ", /*#__PURE__*/React.createElement("b", null, data.studyBlock || 1.5, "h"), " study \u2192 ", /*#__PURE__*/React.createElement("b", null, data.restBlock || 0.5, "h"), " break \xB7 Efficiency: ", /*#__PURE__*/React.createElement("b", null, Math.round((data.studyBlock || 1.5) / ((data.studyBlock || 1.5) + (data.restBlock || 0.5)) * 100), "%"), " effective time")), /*#__PURE__*/React.createElement("div", {
     style: {
       background: "white",
       borderRadius: 14,
@@ -4296,7 +4296,7 @@ function MAddClass(_ref26) {
   var untilDate = f.repeatUntil || defaultUntil;
   var untilLabel = function () {
     try {
-      return new Date(untilDate + "T00:00:00").toLocaleDateString("es-ES", {
+      return new Date(untilDate + "T00:00:00").toLocaleDateString("en-GB", {
         day: "numeric",
         month: "long",
         year: "numeric"
@@ -4306,11 +4306,11 @@ function MAddClass(_ref26) {
     }
   }();
   var presets = [data.finCurso && {
-    l: "Fin de curso",
+    l: "End of year",
     v: data.finCurso
   }].filter(Boolean);
   return /*#__PURE__*/React.createElement(ModalWrap, {
-    title: "A\xF1adir clase \u2014 ".concat(day),
+    title: "Add class \u2014 ".concat(day),
     close: close,
     save: save
   }, /*#__PURE__*/React.createElement(Lbl, null, "Asignatura"), /*#__PURE__*/React.createElement(Sel, {
@@ -4348,7 +4348,7 @@ function MAddClass(_ref26) {
       flex: 1
     }
   }, /*#__PURE__*/React.createElement(TimePick, {
-    label: "Hora inicio",
+    label: "Start time",
     value: f.time,
     onChange: function onChange(v) {
       return setF(function (x) {
@@ -4362,7 +4362,7 @@ function MAddClass(_ref26) {
       flex: 1
     }
   }, /*#__PURE__*/React.createElement(TimePick, {
-    label: "Hora fin",
+    label: "End time",
     value: f.endTime,
     onChange: function onChange(v) {
       return setF(function (x) {
@@ -4494,7 +4494,7 @@ function MAddClass(_ref26) {
       marginBottom: 10
     }
   }, "\uD83D\uDCA1 Configura las fechas del curso en ", /*#__PURE__*/React.createElement("b", null, "Ajustes"), " para acceder a ellas r\xE1pidamente"), /*#__PURE__*/React.createElement(DatePick, {
-    label: "O elige una fecha concreta",
+    label: "Or choose a specific date",
     value: untilDate,
     onChange: function onChange(v) {
       return setF(function (x) {
@@ -4517,7 +4517,7 @@ function MAddClass(_ref26) {
       marginTop: 4
     }
   }, "Solo aparece este ", day, " concreto")), /*#__PURE__*/React.createElement(Lbl, null, "Profesor (opcional)"), /*#__PURE__*/React.createElement(Inp, {
-    placeholder: "Nombre del profesor",
+    placeholder: "Teacher name",
     value: f.teacher,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -4527,7 +4527,7 @@ function MAddClass(_ref26) {
       });
     }
   }), /*#__PURE__*/React.createElement(Lbl, null, "Aula (opcional)"), /*#__PURE__*/React.createElement(Inp, {
-    placeholder: "Ej: 102",
+    placeholder: "E.g.: 102",
     value: f.room,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -4562,11 +4562,11 @@ function MAddExtra(_ref27) {
     close();
   };
   return /*#__PURE__*/React.createElement(ModalWrap, {
-    title: "A\xF1adir extraescolar",
+    title: "Add extracurricular",
     close: close,
     save: save
   }, /*#__PURE__*/React.createElement(Lbl, null, "Nombre"), /*#__PURE__*/React.createElement(Inp, {
-    placeholder: "Ej: Nataci\xF3n, Ingl\xE9s...",
+    placeholder: "E.g.: Swimming, English...",
     value: f.name,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -4672,7 +4672,7 @@ function MAddBlock(_ref28) {
   var bt = BT[f.type] || BT.otro,
     h = bh(f);
   return /*#__PURE__*/React.createElement(ModalWrap, {
-    title: "A\xF1adir comida / ocio",
+    title: "Add meal / leisure",
     close: close,
     save: save
   }, /*#__PURE__*/React.createElement(Lbl, null, "Tipo"), /*#__PURE__*/React.createElement("div", {
@@ -4707,7 +4707,7 @@ function MAddBlock(_ref28) {
       }
     }, bt.e, " ", bt.l);
   })), /*#__PURE__*/React.createElement(Lbl, null, "Nombre *"), /*#__PURE__*/React.createElement(Inp, {
-    placeholder: f.type === "comida" ? "Ej: Comida del cole" : f.type === "ocio" ? "Ej: Videojuegos" : "Nombre",
+    placeholder: f.type === "comida" ? "Ej: Comida del cole" : f.type === "ocio" ? "Ej: Videojuegos" : "Name",
     value: f.name,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -4773,7 +4773,7 @@ function MAddBlock(_ref28) {
       gap: 6,
       marginTop: 6
     }
-  }, [["L–V", [].concat(D5)], ["Todos", [].concat(D7)], ["Finde", ["Sábado", "Domingo"]], ["Ninguno", []]].map(function (_ref31) {
+  }, [["M–F", [].concat(D5)], ["All", [].concat(D7)], ["Weekend", ["Sábado", "Domingo"]], ["None", []]].map(function (_ref31) {
     var _ref32 = _slicedToArray(_ref31, 2),
       l = _ref32[0],
       days = _ref32[1];
@@ -4809,7 +4809,7 @@ function MAddBlock(_ref28) {
     style: {
       color: bt.c
     }
-  }, (h * f.days.length).toFixed(1), "h/semana")));
+  }, (h * f.days.length).toFixed(1), "h/weekana")));
 }
 
 // Date picker with 3 selects — always produces "YYYY-MM-DD" format reliably on mobile
@@ -4830,7 +4830,7 @@ function DatePick(_ref33) {
     _useState42 = _slicedToArray(_useState41, 2),
     dy = _useState42[0],
     setDy = _useState42[1];
-  var MONTHS = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var daysInMonth = new Date(yr, mo, 0).getDate();
   var years = Array.from({
     length: 3
@@ -4908,7 +4908,7 @@ function DatePick(_ref33) {
       fontWeight: 700,
       marginTop: 6
     }
-  }, "\uD83D\uDCC5 ", new Date(value + "T00:00:00").toLocaleDateString("es-ES", {
+  }, "\uD83D\uDCC5 ", new Date(value + "T00:00:00").toLocaleDateString("en-GB", {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -4950,11 +4950,11 @@ function MAddTask(_ref34) {
     close();
   };
   return /*#__PURE__*/React.createElement(ModalWrap, {
-    title: "Nueva tarea / examen",
+    title: "New task / exam",
     close: close,
     save: save
   }, /*#__PURE__*/React.createElement(Lbl, null, "T\xEDtulo *"), /*#__PURE__*/React.createElement(Inp, {
-    placeholder: "Ej: Examen Matem\xE1ticas Tema 5",
+    placeholder: "E.g.: Maths Exam Topic 5",
     value: f.title,
     onChange: function onChange(e) {
       return setF(function (x) {
@@ -5005,7 +5005,7 @@ function MAddTask(_ref34) {
       }
     }, t);
   })), /*#__PURE__*/React.createElement(DatePick, {
-    label: "Fecha de entrega *",
+    label: "Due date *",
     value: f.dueDate,
     onChange: function onChange(v) {
       return setF(function (x) {
@@ -5071,7 +5071,7 @@ function MAddTask(_ref34) {
         });
       });
     },
-    placeholder: "Temas, p\xE1ginas...",
+    placeholder: "Topics, pages...",
     style: {
       width: "100%",
       border: "1px solid #eee",
