@@ -16,6 +16,11 @@
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
     html, body { height:100%; overflow:hidden; background:#1a1a2e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     #root { height:100%; }
+    #splash { position:fixed; inset:0; background:linear-gradient(135deg,#1a1a2e,#0f3460); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; }
+    #splash-title { color:white; font-size:32px; font-weight:900; margin-top:16px; font-family:inherit; }
+    #splash-sub { color:rgba(255,255,255,0.6); font-size:14px; margin-top:8px; font-family:inherit; }
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
     select, input, textarea, button { font-family:inherit; }
     select { -webkit-appearance:menulist; appearance:menulist; }
     input[type=range] { -webkit-appearance:slider-horizontal; appearance:auto; }
@@ -24,20 +29,40 @@
   </style>
 </head>
 <body>
+  <!-- Splash shown immediately while JS loads -->
+  <div id="splash">
+    <svg width="80" height="80" viewBox="0 0 512 512">
+      <rect width="512" height="512" rx="115" fill="#1a1a2e"/>
+      <ellipse cx="256" cy="256" rx="180" ry="80" fill="none" stroke="#4ECDC4" stroke-width="10" opacity="0.9"/>
+      <ellipse cx="256" cy="256" rx="180" ry="80" fill="none" stroke="#4ECDC4" stroke-width="10" opacity="0.9" transform="rotate(60,256,256)"/>
+      <ellipse cx="256" cy="256" rx="180" ry="80" fill="none" stroke="#4ECDC4" stroke-width="10" opacity="0.9" transform="rotate(120,256,256)"/>
+      <circle cx="256" cy="256" r="42" fill="#FF6B6B"/>
+      <circle cx="256" cy="256" r="24" fill="#FFE66D"/>
+      <circle cx="436" cy="256" r="18" fill="#4ECDC4"/>
+      <circle cx="166" cy="112" r="18" fill="#4ECDC4"/>
+      <circle cx="166" cy="400" r="18" fill="#4ECDC4"/>
+    </svg>
+    <div id="splash-title">StudyFlow</div>
+    <div id="splash-sub">Loading...</div>
+  </div>
+
   <div id="root"></div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script>
-    firebase.initializeApp({
-      apiKey: "AIzaSyBJfMcD2IEzLLUvI7mbGDZIKTJgb9jzmnU",
-      authDomain: "studyflow-carlos.firebaseapp.com",
-      projectId: "studyflow-carlos",
-      storageBucket: "studyflow-carlos.firebasestorage.app",
-      messagingSenderId: "1064990005124",
-      appId: "1:1064990005124:web:448029e3366618b8242fd1"
-    });
+    try {
+      firebase.initializeApp({
+        apiKey: "AIzaSyBJfMcD2IEzLLUvI7mbGDZIKTJgb9jzmnU",
+        authDomain: "studyflow-carlos.firebaseapp.com",
+        projectId: "studyflow-carlos",
+        storageBucket: "studyflow-carlos.firebasestorage.app",
+        messagingSenderId: "1064990005124",
+        appId: "1:1064990005124:web:448029e3366618b8242fd1"
+      });
+    } catch(e) { console.log("Firebase init error:", e); }
   </script>
   <script>
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -2196,7 +2221,7 @@ function TasksView(_ref15) {
   }, /*#__PURE__*/React.createElement(IC, {
     n: "plus",
     s: 16
-  }), " Nueva")), /*#__PURE__*/React.createElement("div", {
+  }), " New")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 6,
@@ -2463,7 +2488,7 @@ function TasksView(_ref15) {
         marginTop: 6,
         textAlign: "center"
       }
-    }, "El planificador ajustar\xE1 las ", rem, "h remaining")))), /*#__PURE__*/React.createElement("div", {
+    }, "The planner will adjust the ", rem, "h remaining")))), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         flexDirection: "column",
@@ -2486,6 +2511,14 @@ function TasksView(_ref15) {
         color: "#bbb"
       }
     }, fd(t.dueDate)), /*#__PURE__*/React.createElement(Btn, {
+      icon: "edit",
+      onClick: function onClick() {
+        return setModal({
+          type: "editTask",
+          task: t
+        });
+      }
+    }), /*#__PURE__*/React.createElement(Btn, {
       icon: "trash",
       onClick: function onClick() {
         return del(t.id);
@@ -4415,6 +4448,12 @@ function ModalRouter(_ref24) {
     upd: upd,
     close: close
   });
+  if (m.type === "editTask") return /*#__PURE__*/React.createElement(MEditTask, {
+    task: m.task,
+    data: data,
+    upd: upd,
+    close: close
+  });
   if (m.type === "addBlock") return /*#__PURE__*/React.createElement(MAddBlock, {
     upd: upd,
     close: close,
@@ -5952,10 +5991,249 @@ function MAddTask(_ref41) {
     }
   }), /*#__PURE__*/React.createElement("style", null, "@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}"));
 }
+function MEditTask(_ref44) {
+  var task = _ref44.task,
+    data = _ref44.data,
+    upd = _ref44.upd,
+    close = _ref44.close;
+  var _useState55 = useState({
+      title: task.title || "",
+      subject: task.subject || data.subjects[0] || "",
+      type: task.type || "Exam",
+      dueDate: task.dueDate || "",
+      estimatedHours: task.estimatedHours || 2,
+      priority: task.priority || "media",
+      notes: task.notes || "",
+      progress: task.progress || 0
+    }),
+    _useState56 = _slicedToArray(_useState55, 2),
+    f = _useState56[0],
+    setF = _useState56[1];
+  var save = function save() {
+    if (!f.title || !f.dueDate) return;
+    var parts = f.dueDate.split("-");
+    var safeDate = "".concat(parts[0], "-").concat(String(parts[1]).padStart(2, "0"), "-").concat(String(parts[2]).padStart(2, "0"));
+    upd(function (d) {
+      return _objectSpread(_objectSpread({}, d), {}, {
+        tasks: d.tasks.map(function (t) {
+          return t.id === task.id ? _objectSpread(_objectSpread(_objectSpread({}, t), f), {}, {
+            dueDate: safeDate
+          }) : t;
+        })
+      });
+    });
+    close();
+  };
+  return /*#__PURE__*/React.createElement(ModalWrap, {
+    title: "Edit task",
+    close: close,
+    save: save
+  }, /*#__PURE__*/React.createElement(Lbl, null, "Title *"), /*#__PURE__*/React.createElement(Inp, {
+    placeholder: "E.g.: Maths Exam Topic 5",
+    value: f.title,
+    onChange: function onChange(e) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          title: e.target.value
+        });
+      });
+    }
+  }), /*#__PURE__*/React.createElement(Lbl, null, "Subject"), /*#__PURE__*/React.createElement(Sel, {
+    value: f.subject,
+    onChange: function onChange(e) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          subject: e.target.value
+        });
+      });
+    }
+  }, data.subjects.map(function (s) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: s
+    }, s);
+  })), /*#__PURE__*/React.createElement(Lbl, null, "Type"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 6,
+      marginTop: 4
+    }
+  }, TYPS.map(function (t) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: t,
+      onClick: function onClick() {
+        return setF(function (x) {
+          return _objectSpread(_objectSpread({}, x), {}, {
+            type: t
+          });
+        });
+      },
+      style: {
+        border: "none",
+        borderRadius: 8,
+        padding: "6px 12px",
+        fontSize: 12,
+        fontWeight: 700,
+        cursor: "pointer",
+        background: f.type === t ? "#1a1a2e" : "#f5f5f5",
+        color: f.type === t ? "white" : "#555"
+      }
+    }, t);
+  })), /*#__PURE__*/React.createElement(DatePick, {
+    label: "Due date *",
+    value: f.dueDate,
+    onChange: function onChange(v) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          dueDate: v
+        });
+      });
+    }
+  }), /*#__PURE__*/React.createElement(Lbl, null, "Estimated hours: ", /*#__PURE__*/React.createElement("b", null, f.estimatedHours, "h")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0.5",
+    max: "30",
+    step: "0.5",
+    value: f.estimatedHours,
+    onChange: function onChange(e) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          estimatedHours: +e.target.value
+        });
+      });
+    },
+    style: {
+      width: "100%",
+      accentColor: "#4ECDC4"
+    }
+  }), /*#__PURE__*/React.createElement(Lbl, null, "Priority"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 8,
+      marginTop: 4
+    }
+  }, Object.entries(PR).map(function (_ref45) {
+    var _ref46 = _slicedToArray(_ref45, 2),
+      k = _ref46[0],
+      v = _ref46[1];
+    return /*#__PURE__*/React.createElement("button", {
+      key: k,
+      onClick: function onClick() {
+        return setF(function (x) {
+          return _objectSpread(_objectSpread({}, x), {}, {
+            priority: k
+          });
+        });
+      },
+      style: {
+        flex: 1,
+        border: "2px solid ".concat(v.c),
+        borderRadius: 10,
+        padding: 8,
+        fontSize: 13,
+        fontWeight: 700,
+        cursor: "pointer",
+        background: f.priority === k ? v.c : v.b,
+        color: f.priority === k ? "white" : v.c
+      }
+    }, v.l);
+  })), /*#__PURE__*/React.createElement(Lbl, null, "Progress: ", /*#__PURE__*/React.createElement("b", null, f.progress, "%")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: "100",
+    step: "5",
+    value: f.progress,
+    onChange: function onChange(e) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          progress: +e.target.value
+        });
+      });
+    },
+    style: {
+      width: "100%",
+      accentColor: "#4ECDC4"
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 5,
+      marginTop: 6
+    }
+  }, [0, 25, 50, 75, 100].map(function (pct) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: pct,
+      onClick: function onClick() {
+        return setF(function (x) {
+          return _objectSpread(_objectSpread({}, x), {}, {
+            progress: pct
+          });
+        });
+      },
+      style: {
+        flex: 1,
+        border: "1.5px solid ".concat(f.progress === pct ? "#4ECDC4" : "#ddd"),
+        background: f.progress === pct ? "#4ECDC4" : "white",
+        color: f.progress === pct ? "white" : "#666",
+        borderRadius: 8,
+        padding: "5px 0",
+        fontSize: 12,
+        fontWeight: 700,
+        cursor: "pointer"
+      }
+    }, pct, "%");
+  })), /*#__PURE__*/React.createElement(Lbl, null, "Notes (optional)"), /*#__PURE__*/React.createElement("textarea", {
+    value: f.notes,
+    onChange: function onChange(e) {
+      return setF(function (x) {
+        return _objectSpread(_objectSpread({}, x), {}, {
+          notes: e.target.value
+        });
+      });
+    },
+    placeholder: "Topics, pages...",
+    style: {
+      width: "100%",
+      border: "1px solid #eee",
+      borderRadius: 10,
+      padding: "10px 12px",
+      fontSize: 14,
+      background: "#fafafa",
+      boxSizing: "border-box",
+      outline: "none",
+      fontFamily: "inherit",
+      height: 68,
+      resize: "none",
+      display: "block"
+    }
+  }));
+}
 
 const _root = ReactDOM.createRoot(document.getElementById("root"));
 _root.render(React.createElement(App, null));
 
+  </script>
+  <script>
+    // Hide splash once React has mounted
+    (function hideSplash() {
+      const check = setInterval(function() {
+        const root = document.getElementById("root");
+        if (root && root.children.length > 0) {
+          const splash = document.getElementById("splash");
+          if (splash) {
+            splash.style.transition = "opacity 0.4s";
+            splash.style.opacity = "0";
+            setTimeout(function() { splash.remove(); }, 400);
+          }
+          clearInterval(check);
+        }
+      }, 100);
+      // Force hide after 5 seconds no matter what
+      setTimeout(function() {
+        const splash = document.getElementById("splash");
+        if (splash) splash.remove();
+      }, 5000);
+    })();
   </script>
 </body>
 </html>
